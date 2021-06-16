@@ -1,4 +1,4 @@
-import pygame
+import pygame #this is a test of how github desktop works
 from pygame.locals import *
 import sys
 import random
