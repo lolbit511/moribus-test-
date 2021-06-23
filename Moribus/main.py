@@ -88,12 +88,13 @@ class Player(pygame.sprite.Sprite):
         # Health
         self.health = 5
 
-        self.cooldown = True
+        self.cooldown = False
 
 
     def player_hit(self): #new
+        print("entering player hit")
         if self.cooldown == False:
-            print("entering player hit")
+
             self.cooldown = True  # Enable the cooldown
             pygame.time.set_timer(hit_cooldown, 1000)  # Resets cooldown in 1 second
 
@@ -213,7 +214,7 @@ class Player(pygame.sprite.Sprite):
                 self.image = run_ani_L[self.move_frame]
 
                 # Checks for collision with the Player
-        hits = pygame.sprite.spritecollide(self, Playergroup, False)
+        hits = pygame.sprite.spritecollide(self, Enemies, False)
 
                 # Activates upon either of the two expressions being true
         #if hits and player.attacking == True:
@@ -237,7 +238,7 @@ class Player(pygame.sprite.Sprite):
         # If touching the ground, and not currently jumping, cause the player to jump.
         if hits and not self.jumping:
             self.jumping = True
-            self.vel.y = -10
+            self.vel.y = -13
 
 
 class Castle(pygame.sprite.Sprite):
@@ -332,9 +333,9 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         # Combat
-        self.attacking = False
-        self.cooldown = False
-        self.attack_frame = 0
+        #self.attacking = False
+        #self.cooldown = False
+        #self.attack_frame = 0
 
 
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
@@ -383,9 +384,9 @@ class Enemy(pygame.sprite.Sprite):
             #print("Enemy killed")
 
         # If collision has occured and player not attacking, call "hit" function
-        elif hits and player.attacking == False:
-            self.player_hit()
-            print("player died")
+        #elif hits and player.attacking == False:
+            #self.player_hit()
+            #print("player died")
             #print(self.rect)
 
     def render(self):
@@ -425,7 +426,7 @@ def gravity_check(self):
                 self.jumping = False
 
 while True:
-
+    print(Enemies)
     gravity_check(player)
 
     for event in pygame.event.get():
@@ -464,7 +465,7 @@ while True:
             if event.key == pygame.K_RIGHT:
                 player.move()
         if event.type == hit_cooldown:
-            enemy.cooldown = False
+            player.cooldown = False
             pygame.time.set_timer(hit_cooldown, 0)
             #####################print("CD complete")
 
