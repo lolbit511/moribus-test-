@@ -1,4 +1,4 @@
-import pygame # THIS IS THE ACTUAL FILE
+import pygame # THIS IS THE ACTUAL FILE ON GITHUB (23/6/2021)
 from pygame.locals import *
 import sys
 import random
@@ -46,6 +46,19 @@ class Ground(pygame.sprite.Sprite):
         displaysurface.blit(self.image, (self.rect.x, self.rect.y))
 
 
+class HealthBar(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("heart5.png")
+
+    def render(self):
+        displaysurface.blit(self.image, (10, 10))
+
+# Moved health bar animations out so all other classes have easy access
+health_ani = [pygame.image.load("heart0.png"), pygame.image.load("heart.png"),
+                      pygame.image.load("heart2.png"), pygame.image.load("heart3.png"),
+                      pygame.image.load("heart4.png"), pygame.image.load("heart5.png")]
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -72,8 +85,24 @@ class Player(pygame.sprite.Sprite):
         self.attack_frame = 0
         # Stage
         self.stage = 1
+        # Health
+        self.health = 5
+
+        self.cooldown = True
 
 
+    def player_hit(self): #new
+        if self.cooldown == False:
+            print("entering player hit")
+            self.cooldown = True  # Enable the cooldown
+            pygame.time.set_timer(hit_cooldown, 1000)  # Resets cooldown in 1 second
+
+            self.health = self.health - 1
+            health.image = health_ani[self.health]
+
+            if self.health <= 0:
+                self.kill()
+                pygame.display.update()
 
     def move(self):
         self.acc = vec(0, 0.5)
@@ -140,7 +169,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.pos  # Updates rect
 
 
-    def update(self): #
+    def update(self): #player
         ## Moving animations
 
         # Run animation for the RIGHT
@@ -182,6 +211,19 @@ class Player(pygame.sprite.Sprite):
                 self.image = run_ani_R[self.move_frame]
             elif self.direction == "LEFT":
                 self.image = run_ani_L[self.move_frame]
+
+                # Checks for collision with the Player
+        hits = pygame.sprite.spritecollide(self, Playergroup, False)
+
+                # Activates upon either of the two expressions being true
+        #if hits and player.attacking == True:
+         #   self.kill()
+            # print("Enemy killed")
+
+        # If collision has occured and player not attacking, call "hit" function
+        if hits and player.attacking == False:
+            self.player_hit()
+
 
 
     def jump(self):
@@ -234,17 +276,17 @@ class EventHandler():
     def stage_handler(self):
         # Code for the Tkinter stage selection window
         self.root = Tk()
-        self.root.geometry('200x170')
-
-        button1 = Button(self.root, text="[Tutorial] Twilight Pathway", width=18, height=2,
+        self.root.geometry('295x270')
+        width = 30
+        button1 = Button(self.root, text="[Tutorial] Twilight Pathway", width=width, height=2,
                          command=self.world1)
-        button2 = Button(self.root, text="[Town] Tilia Town", width=18, height=2,
+        button2 = Button(self.root, text="[Town] Tilia Town", width=width, height=2,
                          command=self.world2)
-        button3 = Button(self.root, text="[Dungeon] Shadowmancer's Hideout", width=18, height=2,
+        button3 = Button(self.root, text="[Dungeon] Shadowmancer's Hideout", width=width, height=2,
                          command=self.world3)
-        button4 = Button(self.root, text="[Dungeon] Iceborne Crypts", width=18, height=2,
+        button4 = Button(self.root, text="[Dungeon] Iceborne Crypts", width=width, height=2,
                          command=self.world4)
-        button5 = Button(self.root, text="[Dungeon] Mount Moru", width=18, height=2,
+        button5 = Button(self.root, text="[Dungeon] Mount Moru", width=width, height=2,
                          command=self.world5)
 
         button1.place(x=40, y=15)
@@ -266,6 +308,14 @@ class EventHandler():
         # Empty for now
 
     def world3(self):
+        self.battle = True
+        # Empty for now
+
+    def world4(self):
+        self.battle = True
+        # Empty for now
+
+    def world5(self):
         self.battle = True
         # Empty for now
 
@@ -312,8 +362,8 @@ class Enemy(pygame.sprite.Sprite):
 
         self.rect.center = self.pos  # Updates rect
 
-    def player_hit(self):
-        #print("entering player hit")
+    def player_hit(self): #enemy
+        # print("entering player hit")
         if self.cooldown == False:
             ####################################print("entered hit condition")
             self.cooldown = True  # Enable the cooldown
@@ -321,7 +371,6 @@ class Enemy(pygame.sprite.Sprite):
 
             ####################################print("hit")
             pygame.display.update()
-
 
     def update(self): #enemy
         # Checks for collision with the Player
@@ -335,11 +384,9 @@ class Enemy(pygame.sprite.Sprite):
 
         # If collision has occured and player not attacking, call "hit" function
         elif hits and player.attacking == False:
-            print("player died")
-            print(self.rect)
-
             self.player_hit()
-
+            print("player died")
+            #print(self.rect)
 
     def render(self):
         # Displayed the enemy on screen
@@ -356,6 +403,7 @@ player = Player()
 Playergroup = pygame.sprite.Group()
 Playergroup.add(player)
 
+health = HealthBar()
 
 enemy = Enemy()
 Enemies = pygame.sprite.Group()
@@ -402,7 +450,7 @@ while True:
                 handler.stage_handler()
                 print("castle range")
             if event.key == pygame.K_n:
-                if handler.battle == True and len(Enemies) == 0:
+                if handler.battle == True and len(Enemies) == 0: #
                     handler.next_stage()
                     # Event handling for a range of different key presses
             if event.key == pygame.K_SPACE:
@@ -426,6 +474,13 @@ while True:
 
     # Rendering Sprites
     castle.update()
+
+    if player.health > 0:
+        #displaysurface.blit(player.image, player.rect)
+        player.image = pygame.transform.scale(player.image, (100, 100))
+        displaysurface.blit(player.image, player.rect)
+    health.render()
+
     #enemy.update()
     #enemy.move()
     #enemy.render()
@@ -435,15 +490,15 @@ while True:
         entity.move()
         entity.render()
 
-    player.image = pygame.transform.scale(player.image, (100, 100))################# had to add this to prevent a glitch where the player sprite will go to its full size when in the alternative walking frames
-    displaysurface.blit(player.image, player.rect)
+    ################# had to add this to prevent a glitch where the player sprite will go to its full size when in the alternative walking frames
+
 
     # Player related functions
     player.update()
     if player.attacking == True:
         player.attack()
     player.move()
-    print("player rect:",player.rect)
+    #print("player rect:",player.rect)
 
 
     pygame.display.update()
