@@ -4,6 +4,7 @@ import sys
 import random
 from tkinter import filedialog
 from tkinter import *
+import datetime
 
 pygame.init()
 
@@ -90,6 +91,36 @@ class Player(pygame.sprite.Sprite):
 
         self.cooldown = False
 
+        ## Attacking Animations
+        self.att_ani_L = [pygame.image.load("player.png"), pygame.image.load("player.png"),
+                     pygame.transform.flip(pygame.image.load("sword_right.png"), True, False),
+                     pygame.transform.flip(pygame.image.load("sword_right.png"), True, False),
+                     pygame.transform.flip(pygame.image.load("sword_right.png"), True, False),
+                     pygame.transform.flip(pygame.image.load("sword_right.png"), True, False),
+                     pygame.image.load("player.png")]
+
+        self.att_ani_R = [pygame.transform.flip(pygame.image.load("player.png"), True, False),
+                     pygame.transform.flip(pygame.image.load("player.png"), True, False),
+                     pygame.image.load("sword_right.png"), pygame.image.load("sword_right.png"),
+                     pygame.image.load("sword_right.png"), pygame.image.load("sword_right.png"),
+                     pygame.transform.flip(pygame.image.load("player.png"), True, False)]
+
+        # Run animation for the RIGHT
+        self.run_ani_R = [pygame.transform.flip(pygame.image.load("player.png"),True,False), pygame.transform.flip(pygame.image.load("player.png"),True,False),
+                     pygame.transform.flip(pygame.image.load("player.png"),True,False), pygame.transform.flip(pygame.image.load("player.png"),True,False),
+                     pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),
+                     pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False), pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),
+                     pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),
+                     pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False)]
+
+        self.run_ani_L = [pygame.image.load("player.png"), pygame.image.load("player.png"),
+                     pygame.image.load("player.png"), pygame.image.load("player.png"),
+                     pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png"),
+                     pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png"),
+                     pygame.image.load("playerWalk2.png"), pygame.image.load("playerWalk2.png"),
+                     pygame.image.load("playerWalk2.png"), pygame.image.load("playerWalk2.png")
+                     ]
+
 
     def player_hit(self): #new
         print("entering player hit")
@@ -144,20 +175,14 @@ class Player(pygame.sprite.Sprite):
             self.attack_frame = 0
             self.attacking = False
 
-        ## Attacking Animations
 
-        att_ani_L= [pygame.image.load("player.png"),pygame.image.load("player.png"),pygame.transform.flip(pygame.image.load("sword_right.png"),True,False),pygame.transform.flip(pygame.image.load("sword_right.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("sword_right.png"),True,False),pygame.transform.flip(pygame.image.load("sword_right.png"),True,False),pygame.image.load("player.png")]
-
-        att_ani_R = [pygame.transform.flip(pygame.image.load("player.png"),True,False),pygame.transform.flip(pygame.image.load("player.png"),True,False),pygame.image.load("sword_right.png"), pygame.image.load("sword_right.png"),
-                     pygame.image.load("sword_right.png"), pygame.image.load("sword_right.png"),pygame.transform.flip(pygame.image.load("player.png"),True,False)]
 
 
         # Check direction for correct animation to display
         if self.direction == "RIGHT":
-            self.image = att_ani_R[self.attack_frame]
+            self.image = self.att_ani_R[self.attack_frame]
         elif self.direction == "LEFT":
-            self.image = att_ani_L[self.attack_frame]
+            self.image = self.att_ani_L[self.attack_frame]
 
             # Update the current attack frame
         self.attack_frame += 1
@@ -173,31 +198,17 @@ class Player(pygame.sprite.Sprite):
     def update(self): #player
         ## Moving animations
 
-        # Run animation for the RIGHT
-        run_ani_R = [pygame.transform.flip(pygame.image.load("player.png"),True,False), pygame.transform.flip(pygame.image.load("player.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("player.png"),True,False), pygame.transform.flip(pygame.image.load("player.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False), pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),
-                     pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False)]
 
-        run_ani_L = [pygame.image.load("player.png"), pygame.image.load("player.png"),
-                     pygame.image.load("player.png"), pygame.image.load("player.png"),
-                     pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png"),
-                     pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png"),
-                     pygame.image.load("playerWalk2.png"), pygame.image.load("playerWalk2.png"),
-                     pygame.image.load("playerWalk2.png"), pygame.image.load("playerWalk2.png")
-                     ]
 
 
         # Move the character to the next frame if conditions are met
         if self.jumping == False and self.running == True:
             if self.vel.x > 0:
-                self.image = run_ani_R[self.move_frame]
+                self.image = self.run_ani_R[self.move_frame]
                 self.direction = "RIGHT"
 
             elif self.vel.x < 0:
-                self.image = run_ani_L[self.move_frame]
+                self.image = self.run_ani_L[self.move_frame]
                 self.direction = "LEFT"
 
             self.move_frame += 1
@@ -209,9 +220,9 @@ class Player(pygame.sprite.Sprite):
         if abs(self.vel.x) < 0.2 and self.move_frame != 0:
             self.move_frame = 0
             if self.direction == "RIGHT":
-                self.image = run_ani_R[self.move_frame]
+                self.image = self.run_ani_R[self.move_frame]
             elif self.direction == "LEFT":
-                self.image = run_ani_L[self.move_frame]
+                self.image = self.run_ani_L[self.move_frame]
 
                 # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, Enemies, False)
@@ -426,6 +437,7 @@ def gravity_check(self):
                 self.jumping = False
 
 while True:
+    a = datetime.datetime.now()
     print(Enemies)
     gravity_check(player)
 
@@ -469,18 +481,19 @@ while True:
             pygame.time.set_timer(hit_cooldown, 0)
             #####################print("CD complete")
 
-    background.render()
-    ground.render()
+
 
 
     # Rendering Sprites
+    background.render()
+    ground.render()
     castle.update()
 
     if player.health > 0:
         #displaysurface.blit(player.image, player.rect)
         player.image = pygame.transform.scale(player.image, (100, 100))
         displaysurface.blit(player.image, player.rect)
-    health.render()
+    #health.render()
 
     #enemy.update()
     #enemy.move()
@@ -490,6 +503,7 @@ while True:
         entity.update()
         entity.move()
         entity.render()
+        pass
 
     ################# had to add this to prevent a glitch where the player sprite will go to its full size when in the alternative walking frames
 
@@ -502,5 +516,11 @@ while True:
     #print("player rect:",player.rect)
 
 
+
+
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
+
+
+    b = datetime.datetime.now()
+    print(b - a)
