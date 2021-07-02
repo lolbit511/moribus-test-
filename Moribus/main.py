@@ -249,7 +249,7 @@ class Player(pygame.sprite.Sprite):
         # If touching the ground, and not currently jumping, cause the player to jump.
         if hits and not self.jumping:
             self.jumping = True
-            self.vel.y = -13
+            self.vel.y = -18
 
 
 class Castle(pygame.sprite.Sprite):
@@ -263,10 +263,29 @@ class Castle(pygame.sprite.Sprite):
             displaysurface.blit(self.image, (400, 80))
 
 
+class StageDisplay(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.headingFont = pygame.font.SysFont('Verdana', 60)
+        self.text = self.headingFont.render("STAGE: " + str(handler.stage), True, (157, 3, 252))
+        self.rect = self.text.get_rect()
+        self.posx = -100
+        self.posy = 100
+        self.display = False
 
+    def move_display(self):
+        # Create the text to be displayed
+        self.text = self.headingFont.render("STAGE: " + str(handler.stage), True, (157, 3, 252))
+        if self.posx < 700:
+            self.posx += 5
+            displaysurface.blit(self.text, (self.posx, self.posy))
+        else:
+            self.display = False
+            self.kill()
 
 class EventHandler():
     def __init__(self):
+        self.stage = 1
         self.enemy_count = 0
         self.battle = False
         self.enemy_generation = pygame.USEREVENT + 1
@@ -274,11 +293,11 @@ class EventHandler():
         for x in range(1, 21):
             self.stage_enemies.append(int((x ** 2 / 2) + 1)) #formula for enemy generation
 
-        def next_stage(self):  # Code for when the next stage is clicked
-            self.stage += 1
-            self.enemy_count = 0
-            print("Stage: " + str(self.stage))
-            pygame.time.set_timer(self.enemy_generation, 1500 - (50 * self.stage))
+    def next_stage(self):  # Code for when the next stage is clicked
+        self.stage += 1
+        self.enemy_count = 0
+        print("Stage: " + str(self.stage))
+        pygame.time.set_timer(self.enemy_generation, 1500 - (50 * self.stage))
 
     # Code for when the next stage is clicked (reminder: ask question about this)
 
@@ -350,7 +369,7 @@ class Enemy(pygame.sprite.Sprite):
 
 
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
-        self.vel.x = random.randint(5, 18) / 2  # Randomized velocity of the generated enemy
+        self.vel.x = random.randint(1, 3) / 2  # Randomized velocity of the generated enemy
 
         # Sets the intial position of the enemy
         if self.direction == 0:
@@ -423,7 +442,7 @@ Enemies.add(enemy)
 
 castle = Castle()
 handler = EventHandler()
-
+stage_display = StageDisplay()
 
 
 def gravity_check(self):
@@ -437,8 +456,10 @@ def gravity_check(self):
                 self.jumping = False
 
 while True:
+    #player.health = 6 # cheat code 1
+
     a = datetime.datetime.now()
-    print(Enemies)
+    #print(Enemies)
     gravity_check(player)
 
     for event in pygame.event.get():
@@ -465,6 +486,9 @@ while True:
             if event.key == pygame.K_n:
                 if handler.battle == True and len(Enemies) == 0: #
                     handler.next_stage()
+                    print("test")
+                    stage_display = StageDisplay()
+                    stage_display.display = True
                     # Event handling for a range of different key presses
             if event.key == pygame.K_SPACE:
                 player.jump()
@@ -493,11 +517,9 @@ while True:
         #displaysurface.blit(player.image, player.rect)
         player.image = pygame.transform.scale(player.image, (100, 100))
         displaysurface.blit(player.image, player.rect)
-    #health.render()
 
-    #enemy.update()
-    #enemy.move()
-    #enemy.render()
+    health.render()
+
 
     for entity in Enemies:
         entity.update()
@@ -523,4 +545,4 @@ while True:
 
 
     b = datetime.datetime.now()
-    print(b - a)
+    #print(b - a)
