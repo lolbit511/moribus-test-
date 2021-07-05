@@ -292,6 +292,17 @@ class StageDisplay(pygame.sprite.Sprite):
         self.posx = -100
         self.posy = 100
         self.display = False
+        self.clear = False
+
+    def stage_clear(self):
+        self.text = headingfont.render("STAGE CLEAR!", True, color_dark)
+        if self.posx < 720:
+            self.posx += 10
+            displaysurface.blit(self.text, (self.posx, self.posy))
+        else:
+            self.display = False
+            self.posx = -100
+            self.posy = 100
 
     def move_display(self):
         # Create the text to be displayed
@@ -325,18 +336,32 @@ class StatusBar(pygame.sprite.Sprite): #########################################
 class EventHandler():
     def __init__(self):
         self.stage = 1
-        self.enemy_count = 10
+        self.enemy_count = 0
+        self.dead_enemy_count = 0
         self.battle = False
         self.enemy_generation = pygame.USEREVENT + 1
         self.stage_enemies = []
-        for x in range(1, 21):
-            self.stage_enemies.append(int((x ** 2 / 2) + 1)) #formula for enemy generation
+        #self.stage_enemies.append(0)
+        for x in range(0, 21):
+            self.stage_enemies.append(x) #formula for enemy generation
+        print(self.stage_enemies)
 
     def next_stage(self):  # Code for when the next stage is clicked
         self.stage += 1
+        print("Stage: " + str(self.stage))
         self.enemy_count = 0
+        self.dead_enemy_count = 0
         print("Stage: " + str(self.stage))
         pygame.time.set_timer(self.enemy_generation, 1500 - (50 * self.stage))
+
+    def update(self): #Event Handler
+        #print("a:" , self.dead_enemy_count)
+        print("b:" , self.stage_enemies[self.stage - 1])
+        if self.dead_enemy_count == self.stage_enemies[self.stage - 1]:
+            self.dead_enemy_count = 0
+            stage_display.clear = True
+            stage_display.stage_clear()
+            print("stageClear ACTIVE")
 
     # Code for when the next stage is clicked (reminder: ask question about this)
 
@@ -453,6 +478,8 @@ class Enemy(pygame.sprite.Sprite):
             if player.mana < 100: player.mana += self.mana  # Release mana
             player.experiance += 1  # Release expeiriance
             self.kill()
+            handler.dead_enemy_count += 1
+            #print(handler.dead_enemy_count)
 
         #If collision has occured and player not attacking, call "hit" function
         elif hits and player.attacking == False:
@@ -479,6 +506,7 @@ health = HealthBar()
 
 enemy = Enemy()
 Enemies = pygame.sprite.Group()
+
 Enemies.add(enemy)
 
 castle = Castle()
@@ -499,7 +527,8 @@ def gravity_check(self):
 status_bar = StatusBar()
 
 while True:
-    print(player.experiance)
+    #print(player.experiance)
+
 
     #player.health = 6 # cheat code 1
 
@@ -518,7 +547,10 @@ while True:
             pass
 
         if event.type == handler.enemy_generation:
-            if handler.enemy_count < handler.stage_enemies[player.stage - 1]:
+            print(handler.stage)
+            while handler.enemy_count < handler.stage_enemies[handler.stage - 1]: ##############################################################################################################################################################################################################
+                print("a:", handler.enemy_count)
+                print("b:", handler.stage_enemies[player.stage - 1])
                 enemy = Enemy()
                 Enemies.add(enemy)
                 handler.enemy_count += 1
@@ -528,7 +560,7 @@ while True:
             if 300 < player.rect.x < 600 and event.key == pygame.K_e:
                 handler.stage_handler()
                 #print("castle range")
-            if event.key == pygame.K_n: ################################################################################################################################################
+            if event.key == pygame.K_n:
                 if handler.battle == True and len(Enemies) == 0:
                     handler.next_stage()
                     print("test")
@@ -553,7 +585,6 @@ while True:
             #####################print("CD complete")
 
 
-
     # attackCD = attackCD - 1
     # if attackCD <1:
     #     attackCD = 1
@@ -574,11 +605,11 @@ while True:
 
     health.render()
 
-
-    for entity in Enemies:
-        entity.update()
-        entity.move()
-        entity.render()
+    if Enemies != None:
+        for entity in Enemies:
+            entity.update()
+            entity.move()
+            entity.render()
 
 
     ################# had to add this to prevent a glitch where the player sprite will go to its full size when in the alternative walking frames
@@ -594,13 +625,18 @@ while True:
     player.update()
     #print("player rect:",player.rect)
 
-    # Render stage display
+
+    # Render stage display ######################################
     if stage_display.display == True:
         stage_display.move_display()
+    if stage_display.clear == True:
+        stage_display.stage_clear()
 
+    #print(stage_display.clear)
     # Status bar update and render
     displaysurface.blit(status_bar.surf, (580, 5))
     status_bar.update_draw()
+    handler.update()
 
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
