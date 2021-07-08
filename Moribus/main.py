@@ -125,26 +125,22 @@ class Player(pygame.sprite.Sprite):
         self.run_ani_R = [pygame.transform.flip(pygame.image.load("player.png"),True,False), pygame.transform.flip(pygame.image.load("player.png"),True,False),
                      pygame.transform.flip(pygame.image.load("player.png"),True,False), pygame.transform.flip(pygame.image.load("player.png"),True,False),
                      pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False), pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),
-                     pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False),pygame.transform.flip(pygame.image.load("playerWalk2.png"), True, False)]
+                     pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False), pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False)]
 
         self.run_ani_L = [pygame.image.load("player.png"), pygame.image.load("player.png"),
                      pygame.image.load("player.png"), pygame.image.load("player.png"),
                      pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png"),
-                     pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png"),
-                     pygame.image.load("playerWalk2.png"), pygame.image.load("playerWalk2.png"),
-                     pygame.image.load("playerWalk2.png"), pygame.image.load("playerWalk2.png")
-                     ]
+                     pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png")]
 
         self.att_ani_R = [pygame.transform.flip(pygame.image.load("player.png"), True, False)]
-        self.att_ani_R = self.att_ani_R + [pygame.image.load("sword_right.png")] * self.attCD
+        self.att_ani_R = self.att_ani_R + [pygame.transform.flip(pygame.image.load("sword.png"), True, False)] * self.attCD
+
         self.att_ani_R.append(pygame.image.load("player.png"))
 
 
         #print(self.att_ani_R)
         self.att_ani_L = [pygame.image.load("player.png")]
-        self.att_ani_L = self.att_ani_L + [pygame.transform.flip(pygame.image.load("sword_right.png"), True, False)]*self.attCD
+        self.att_ani_L = self.att_ani_L + [pygame.image.load("sword.png")] * self.attCD
         self.att_ani_L.append(pygame.transform.flip(pygame.image.load("player.png"), True, False))
 
         #print(self.att_ani_L)
@@ -245,16 +241,17 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.run_ani_L[self.move_frame]
 
                 # Checks for collision with the Player
-        hits = pygame.sprite.spritecollide(self, Enemies, False)
+        if Enemies != None:
+            hits = pygame.sprite.spritecollide(self, Enemies, False)
 
-                # Activates upon either of the two expressions being true
-        #if hits and player.attacking == True:
-         #   self.kill()
-            # print("Enemy killed")
+                    # Activates upon either of the two expressions being true
+            #if hits and player.attacking == True:
+             #   self.kill()
+                # print("Enemy killed")
 
-        # If collision has occured and player not attacking, call "hit" function
-        if hits and player.attacking == False:
-            self.player_hit()
+            # If collision has occured and player not attacking, call "hit" function
+            if hits and player.attacking == False:
+                self.player_hit()
 
 
 
@@ -342,7 +339,7 @@ class EventHandler():
         self.enemy_generation = pygame.USEREVENT + 1
         self.stage_enemies = []
         #self.stage_enemies.append(0)
-        for x in range(0, 21):
+        for x in range(1, 21):
             self.stage_enemies.append(x) #formula for enemy generation
         print(self.stage_enemies)
 
@@ -504,10 +501,10 @@ Playergroup.add(player)
 
 health = HealthBar()
 
-enemy = Enemy()
+#enemy = Enemy()
 Enemies = pygame.sprite.Group()
-
-Enemies.add(enemy)
+#Enemies = []
+#Enemies.add(enemy)
 
 castle = Castle()
 handler = EventHandler()
@@ -548,7 +545,7 @@ while True:
 
         if event.type == handler.enemy_generation:
             print(handler.stage)
-            while handler.enemy_count < handler.stage_enemies[handler.stage - 1]: ##############################################################################################################################################################################################################
+            while handler.enemy_count < handler.stage_enemies[handler.stage - 1]:
                 print("a:", handler.enemy_count)
                 print("b:", handler.stage_enemies[player.stage - 1])
                 enemy = Enemy()
@@ -561,11 +558,12 @@ while True:
                 handler.stage_handler()
                 #print("castle range")
             if event.key == pygame.K_n:
-                if handler.battle == True and len(Enemies) == 0:
-                    handler.next_stage()
-                    print("test")
-                    stage_display = StageDisplay()
-                    stage_display.display = True
+                if Enemies != None:
+                    if handler.battle == True and len(Enemies) == 0:
+                        handler.next_stage()
+                        print("test")
+                        stage_display = StageDisplay()
+                        stage_display.display = True
                     # Event handling for a range of different key presses
             if event.key == pygame.K_SPACE:
                 player.jump()
@@ -605,7 +603,7 @@ while True:
 
     health.render()
 
-    if Enemies != None:
+    if Enemies != None: ##################################### check if array is empty ###################################################################################################################################################
         for entity in Enemies:
             entity.update()
             entity.move()
