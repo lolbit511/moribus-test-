@@ -38,7 +38,7 @@ pygame.display.set_caption("Moribus")
 class Background(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.bgimage = pygame.image.load("background.png")
+        self.bgimage = pygame.image.load("images/background.png")
         self.bgimage = pygame.transform.scale(self.bgimage, (WIDTH, HEIGHT))
         self.bgY = 0
         self.bgX = 0
@@ -50,9 +50,9 @@ class Background(pygame.sprite.Sprite):
 class Ground(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Ground.png")
+        self.image = pygame.image.load("images/Ground.png")
         self.image = pygame.transform.scale(self.image, (WIDTH,50))
-        self.rect = self.image.get_rect(center=(350, 350))
+        self.rect = self.image.get_rect(center=(350, 330))
 
 
 
@@ -63,21 +63,21 @@ class Ground(pygame.sprite.Sprite):
 class HealthBar(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("heart5.png")
+        self.image = pygame.image.load("images/heart5.png")
 
     def render(self):
         displaysurface.blit(self.image, (10, 10))
 
 # Moved health bar animations out so all other classes have easy access
-health_ani = [pygame.image.load("heart0.png"), pygame.image.load("heart.png"),
-                      pygame.image.load("heart2.png"), pygame.image.load("heart3.png"),
-                      pygame.image.load("heart4.png"), pygame.image.load("heart5.png")]
+health_ani = [pygame.image.load("images/heart0.png"), pygame.image.load("images/heart.png"),
+                      pygame.image.load("images/heart2.png"), pygame.image.load("images/heart3.png"),
+                      pygame.image.load("images/heart4.png"), pygame.image.load("images/heart5.png")]
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
 
         super().__init__()
-        self.image = pygame.image.load("playerWalk1.png")
+        self.image = pygame.image.load("images/playerWalk1.png")
         #cropped = pygame.Surface((80, 80))
         #cropped.blit(self.image, (-80, -80))
         #self.subsurface = pygame.Surface.subsurface(20, 2, 80, 98)
@@ -103,6 +103,7 @@ class Player(pygame.sprite.Sprite):
         self.experiance = 0
         self.mana = 0
         self.coin = 0
+        self.magic_cooldown = 1
 
         # Stage
         self.stage = 1
@@ -125,26 +126,26 @@ class Player(pygame.sprite.Sprite):
         #              pygame.transform.flip(pygame.image.load("player.png"), True, False)]
 
         # Run animation for the RIGHT
-        self.run_ani_R = [pygame.transform.flip(pygame.image.load("player.png"),True,False), pygame.transform.flip(pygame.image.load("player.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("player.png"),True,False), pygame.transform.flip(pygame.image.load("player.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False), pygame.transform.flip(pygame.image.load("playerWalk1.png"),True,False)]
+        self.run_ani_R = [pygame.transform.flip(pygame.image.load("images/player.png"),True,False), pygame.transform.flip(pygame.image.load("images/player.png"),True,False),
+                     pygame.transform.flip(pygame.image.load("images/player.png"),True,False), pygame.transform.flip(pygame.image.load("images/player.png"),True,False),
+                     pygame.transform.flip(pygame.image.load("images/playerWalk1.png"),True,False),pygame.transform.flip(pygame.image.load("images/playerWalk1.png"),True,False),
+                     pygame.transform.flip(pygame.image.load("images/playerWalk1.png"),True,False), pygame.transform.flip(pygame.image.load("images/playerWalk1.png"),True,False)]
 
-        self.run_ani_L = [pygame.image.load("player.png"), pygame.image.load("player.png"),
-                     pygame.image.load("player.png"), pygame.image.load("player.png"),
-                     pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png"),
-                     pygame.image.load("playerWalk1.png"), pygame.image.load("playerWalk1.png")]
+        self.run_ani_L = [pygame.image.load("images/player.png"), pygame.image.load("images/player.png"),
+                     pygame.image.load("images/player.png"), pygame.image.load("images/player.png"),
+                     pygame.image.load("images/playerWalk1.png"), pygame.image.load("images/playerWalk1.png"),
+                     pygame.image.load("images/playerWalk1.png"), pygame.image.load("images/playerWalk1.png")]
 
-        self.att_ani_R = [pygame.transform.flip(pygame.image.load("player.png"), True, False)]
-        self.att_ani_R = self.att_ani_R + [pygame.transform.flip(pygame.image.load("sword.png"), True, False)] * self.attCD
+        self.att_ani_R = [pygame.transform.flip(pygame.image.load("images/player.png"), True, False)]
+        self.att_ani_R = self.att_ani_R + [pygame.transform.flip(pygame.image.load("images/sword.png"), True, False)] * self.attCD
 
-        self.att_ani_R.append(pygame.image.load("player.png"))
+        self.att_ani_R.append(pygame.image.load("images/player.png"))
 
 
         #print(self.att_ani_R)
-        self.att_ani_L = [pygame.image.load("player.png")]
-        self.att_ani_L = self.att_ani_L + [pygame.image.load("sword.png")] * self.attCD
-        self.att_ani_L.append(pygame.transform.flip(pygame.image.load("player.png"), True, False))
+        self.att_ani_L = [pygame.image.load("images/player.png")]
+        self.att_ani_L = self.att_ani_L + [pygame.image.load("images/sword.png")] * self.attCD
+        self.att_ani_L.append(pygame.transform.flip(pygame.image.load("images/player.png"), True, False))
 
         #print(self.att_ani_L)
 
@@ -164,7 +165,7 @@ class Player(pygame.sprite.Sprite):
                 self.kill()
                 pygame.display.update()
 
-    def move(self):
+    def move(self): #player
         if cursor.wait == 1: return
         self.acc = vec(0, 0.5)
         # Will set running to False if the player has slowed down to a certain extent
@@ -177,9 +178,9 @@ class Player(pygame.sprite.Sprite):
         pressed_keys = pygame.key.get_pressed()
 
         # Accelerates the player in the direction of the key press
-        if pressed_keys[K_LEFT]:
+        if pressed_keys[K_LEFT] or pressed_keys[K_a]:
             self.acc.x = -ACC
-        if pressed_keys[K_RIGHT]:
+        if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
             self.acc.x = ACC
         # Formulas to calculate velocity while accounting for friction
         self.acc.x += self.vel.x * FRIC
@@ -193,9 +194,6 @@ class Player(pygame.sprite.Sprite):
             self.pos.x = WIDTH
 
         self.rect.midbottom = self.pos  # Update rect with new pos
-
-
-
 
 
     def attack(self):
@@ -280,9 +278,9 @@ class Item(pygame.sprite.Sprite):
     def __init__(self, itemtype):
         super().__init__()
         if itemtype == 1:
-            self.image = pygame.image.load("heart.png")
+            self.image = pygame.image.load("images/heart.png")
         elif itemtype == 2:
-            self.image = pygame.image.load("coin.png")
+            self.image = pygame.image.load("images/coin.png")
             self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect()
         self.type = itemtype
@@ -316,12 +314,12 @@ class PButton(pygame.sprite.Sprite):
 
     def render(self, num):
         if (num == 0):
-            self.image = pygame.image.load("home_small.png")
+            self.image = pygame.image.load("images/home_small.png")
         elif (num == 1):
             if cursor.wait == 0:
-                self.image = pygame.image.load("pause_small.png")
+                self.image = pygame.image.load("images/pause_small.png")
             else:
-                self.image = pygame.image.load("play_small.png")
+                self.image = pygame.image.load("images/play_small.png")
 
         displaysurface.blit(self.image, self.vec)
 
@@ -329,7 +327,7 @@ class PButton(pygame.sprite.Sprite):
 class Cursor(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("cursor.png")
+        self.image = pygame.image.load("images/cursor.png")
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.wait = 0
@@ -357,7 +355,7 @@ class Castle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.hide = False
-        self.image = pygame.image.load("castle.png")
+        self.image = pygame.image.load("images/castle.png")
 
     def update(self):
         if self.hide == False:
@@ -463,9 +461,9 @@ class EventHandler():
 
         # Bring back normal backgrounds
         castle.hide = False
-        background.bgimage = pygame.image.load("Background.png")
+        background.bgimage = pygame.image.load("images/Background.png")
         background.bgimage = pygame.transform.scale(background.bgimage, (WIDTH, HEIGHT))
-        ground.image = pygame.image.load("Ground.png")
+        ground.image = pygame.image.load("images/Ground.png")
         ground.image = pygame.transform.scale(ground.image, (WIDTH,50))
 
     # Code for when the next stage is clicked (reminder: ask question about this)
@@ -529,7 +527,7 @@ class EventHandler():
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Enemy.png")
+        self.image = pygame.image.load("images/Enemy.png")
 
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
@@ -585,10 +583,13 @@ class Enemy(pygame.sprite.Sprite):
         rand_num = numpy.random.uniform(0, 50)
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
-        #print(player.attacking)
-        #print(hits)
+
+        # Checks for collision with Fireballs
+        f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
+
+
         # Activates upon either of the two expressions being true
-        if hits and player.attacking == True:
+        if hits and player.attacking == True or f_hits:
             if player.mana < 100: player.mana += self.mana  # Release mana
             player.experiance += 1  # Release expeiriance
             self.kill()
@@ -619,6 +620,43 @@ class Enemy(pygame.sprite.Sprite):
         # Displayed the enemy on screen
         displaysurface.blit(self.image, (self.pos.x, self.pos.y))
 
+
+class FireBall(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.direction = player.direction
+        if self.direction == "RIGHT":
+            self.image = pygame.image.load("images/fireball1_R.png")
+        else:
+            self.image = pygame.image.load("images/fireball1_L.png")
+        self.rect = self.image.get_rect(center=player.pos)
+        self.rect.x = player.pos.x
+        self.rect.y = player.pos.y - 40
+
+    def fire(self): #movement of the fireball
+        player.magic_cooldown = 0
+        # Runs while the fireball is still within the screen w/ extra margin
+        if -10 < self.rect.x < 710:
+            if self.direction == "RIGHT":
+                self.image = pygame.image.load("images/fireball1_R.png")
+                displaysurface.blit(self.image, self.rect)
+            else:
+                self.image = pygame.image.load("images/fireball1_L.png")
+                displaysurface.blit(self.image, self.rect)
+
+            if self.direction == "RIGHT":
+                self.rect.move_ip(12, 0)
+            else:
+                self.rect.move_ip(-12, 0)
+        else:
+            self.kill()
+            player.magic_cooldown = 1
+            player.attacking = False
+
+
+
+
+
 attackCD = 1 ###############################################
 
 background = Background()
@@ -629,6 +667,7 @@ ground_group.add(ground)
 Items = pygame.sprite.Group()
 button = PButton()
 cursor = Cursor()
+Fireballs = pygame.sprite.Group()
 
 player = Player()
 Playergroup = pygame.sprite.Group()
@@ -661,8 +700,8 @@ status_bar = StatusBar()
 while True:
     #print(player.experiance)
 
+    #player.mana = 12  # cheat code 1
 
-    #player.health = 6 # cheat code 1
 
     a = datetime.datetime.now()
     #print(Enemies)
@@ -682,6 +721,17 @@ while True:
                     cursor.pause()
                 elif button.imgdisp == 0:
                     handler.home()
+            elif 0 <= mouse[0] <= 700 and 0 <= mouse[1] <= 300 and event.button == 1: # attacking
+                player.attack()
+                player.attacking = True
+                print("attack")
+            elif 0 <= mouse[0] <= 700 and 0 <= mouse[1] <= 300 and player.magic_cooldown == 1 and event.button == 3:
+                print("fired")
+                if player.mana >= 6:
+                    player.mana -= 6
+                    player.attacking = True
+                    fireball = FireBall()
+                    Fireballs.add(fireball)
 
         if event.type == handler.enemy_generation:
             #print(handler.stage)
@@ -707,13 +757,9 @@ while True:
                         stage_display.display = True
 
                     # Event handling for a range of different key presses
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE or event.key == pygame.K_w:
                 player.jump()
-            if event.key == pygame.K_a: #and attackCD < 2:  new
-                # attackCD = 40
 
-                player.attack()
-                player.attacking = True
 
             if event.key == pygame.K_LEFT:
                 player.move()
@@ -766,6 +812,9 @@ while True:
     for i in Items:
         i.render()
         i.update()
+
+    for ball in Fireballs:
+        ball.fire()
 
     player.move()
     player.update()
