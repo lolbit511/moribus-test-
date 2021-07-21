@@ -351,15 +351,15 @@ class Cursor(pygame.sprite.Sprite):
 
 
 
-class Castle(pygame.sprite.Sprite):
+class Map(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.hide = False
-        self.image = pygame.image.load("images/castle.png")
+        self.image = pygame.image.load("images/Map.png")
 
     def update(self):
         if self.hide == False:
-            displaysurface.blit(self.image, (400, 80))
+            displaysurface.blit(self.image, (400, 100))
 
 
 class StageDisplay(pygame.sprite.Sprite):
@@ -417,30 +417,37 @@ class StatusBar(pygame.sprite.Sprite):
 
 class EventHandler():
     def __init__(self):
+        self.world = 0
+        self.next_level_started = False
         self.stage = 1
         self.enemy_count = 0
         self.dead_enemy_count = 0
         self.battle = False
         self.enemy_generation = pygame.USEREVENT + 1
+        self.enemy_generation2 = pygame.USEREVENT + 3
         self.stage_enemies = []
         #self.stage_enemies.append(0)
-        for x in range(1, 21):
+
+        self.phase = 21
+        for x in range(1, self.phase):
             self.stage_enemies.append(x) #formula for enemy generation
         print(self.stage_enemies)
 
     def next_stage(self):  # Code for when the next stage is clicked
         button.imgdisp = 1
         self.stage += 1
-        print("Stage: " + str(self.stage))
         self.enemy_count = 0
         self.dead_enemy_count = 0
-        print("Stage: " + str(self.stage))
-        pygame.time.set_timer(self.enemy_generation, 1500 - (50 * self.stage))
+        #print("Stage: " + str(self.stage))
+        if self.world == 1:
+            pygame.time.set_timer(self.enemy_generation, 1500 - (50 * self.stage))
+        elif self.world == 2:
+            pygame.time.set_timer(self.enemy_generation2, 1500 - (50 * self.stage))
 
     def update(self): #Event Handler
         #print("a:" , self.dead_enemy_count)
         #print("b:" , self.stage_enemies[self.stage - 1])
-        if self.dead_enemy_count == self.stage_enemies[self.stage - 1]:
+        if self.dead_enemy_count == self.stage_enemies[self.stage]:
             self.dead_enemy_count = 0
             stage_display.clear = True
             stage_display.stage_clear()
@@ -449,10 +456,13 @@ class EventHandler():
     def home(self):
         # Reset Battle code
         pygame.time.set_timer(self.enemy_generation, 0)
+        pygame.time.set_timer(self.enemy_generation2, 0)
+
         self.battle = False
         self.enemy_count = 0
         self.dead_enemy_count = 0
         self.stage = 1
+        self.world = 0
 
         # Destroy any enemies or items lying around
         for group in Enemies, Items:
@@ -460,7 +470,7 @@ class EventHandler():
                 entity.kill()
 
         # Bring back normal backgrounds
-        castle.hide = False
+        Map.hide = False
         background.bgimage = pygame.image.load("images/Background.png")
         background.bgimage = pygame.transform.scale(background.bgimage, (WIDTH, HEIGHT))
         ground.image = pygame.image.load("images/Ground.png")
@@ -476,11 +486,11 @@ class EventHandler():
         self.root = Tk()
         self.root.geometry('295x270')
         width = 30
-        button1 = Button(self.root, text="[Tutorial] Twilight Pathway", width=width, height=2,
+        button1 = Button(self.root, text="[Dungeon] Twilight Plains", width=width, height=2,
                          command=self.world1)
-        button2 = Button(self.root, text="[Town] Tilia Town", width=width, height=2,
+        button2 = Button(self.root, text="[Dungeon] Sabreclaw Wastelands", width=width, height=2,
                          command=self.world2)
-        button3 = Button(self.root, text="[Dungeon] Shadowmancer's Hideout", width=width, height=2,
+        button3 = Button(self.root, text="[Town] Tarnstead Village", width=width, height=2,
                          command=self.world3)
         button4 = Button(self.root, text="[Dungeon] Iceborne Crypts", width=width, height=2,
                          command=self.world4)
@@ -497,18 +507,27 @@ class EventHandler():
 
     def world1(self):
         self.root.destroy()
+        self.world = 1
         pygame.time.set_timer(self.enemy_generation, 2000)
         button.imgdisp = 1
-        castle.hide = True
+        Map.hide = True
         self.battle = True
 
     def world2(self):
+        self.root.destroy()
+        background.bgimage = pygame.image.load("images/desert.jpg")
+        ground.image = pygame.image.load("images/desert_ground.png")
+
+        pygame.time.set_timer(self.enemy_generation2, 2500)
+
+        self.world = 2
         button.imgdisp = 1
+        Map.hide = True
         self.battle = True
-        # Empty for now
 
     def world3(self):
         button.imgdisp = 1
+        self.world = 3
         self.battle = True
         # Empty for now
 
@@ -621,14 +640,132 @@ class Enemy(pygame.sprite.Sprite):
         displaysurface.blit(self.image, (self.pos.x, self.pos.y))
 
 
+class Enemy2(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.pos = vec(0, 0)
+        self.vel = vec(0, 0)
+        self.wait = 0
+        self.wait_status = False
+        self.turning = 0
+
+        self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
+        self.vel.x = random.randint(2, 6) / 3  # Randomized velocity of the generated enemy
+        self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
+
+        if self.direction == 0: self.image = pygame.image.load("images/enemy2.png")
+        if self.direction == 1: self.image = pygame.image.load("images/enemy2_L.png")
+        self.rect = self.image.get_rect()
+
+        # Sets the initial position of the enemy
+        if self.direction == 0:
+            self.pos.x = 0
+            self.pos.y = 250
+        if self.direction == 1:
+            self.pos.x = 700
+            self.pos.y = 250
+
+    def move(self):
+        if cursor.wait == 1: return
+
+        # Causes the enemy to change directions upon reaching the end of screen
+        if self.pos.x >= (WIDTH - 50):
+            self.direction = 1
+        elif self.pos.x <= 0:
+            self.direction = 0
+        # Updates position with new values
+        if self.wait > 60:
+            self.wait_status = True
+        elif int(self.wait) <= 0:
+            self.wait_status = False
+
+        if (self.direction_check()):
+            self.turn()
+            self.wait = 90
+            self.turning = 1
+
+        if self.wait_status == True:
+            self.wait -= 1
+
+        elif self.direction == 0:
+            self.pos.x += self.vel.x
+            self.wait += self.vel.x
+        elif self.direction == 1:
+            self.pos.x -= self.vel.x
+            self.wait += self.vel.x
+
+        self.rect.topleft = self.pos  # Updates rect
+
+
+
+    def update(self):
+        # Checks for collision with the Player
+        hits = pygame.sprite.spritecollide(self, Playergroup, False)
+
+        # Checks for collision with Fireballs
+        f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
+
+        # Activates upon either of the two expressions being true
+        if hits and player.attacking == True or f_hits:
+            self.kill()
+            handler.dead_enemy_count += 1
+
+            if player.mana < 100: player.mana += self.mana  # Release mana
+            player.experiance += 1  # Release expeiriance
+
+            rand_num = numpy.random.uniform(0, 100)
+            item_no = 0
+            if rand_num >= 0 and rand_num <= 5:  # 1 / 20 chance for an item (health) drop
+                item_no = 1
+            elif rand_num > 5 and rand_num <= 15:
+                item_no = 2
+
+            if item_no != 0:
+                # Add Item to Items group
+                item = Item(item_no)
+                Items.add(item)
+                # Sets the item location to the location of the killed enemy
+                item.posx = self.pos.x
+                item.posy = self.pos.y
+
+    def render(self):
+        # Displays the enemy on screen
+        displaysurface.blit(self.image, self.rect)
+
+    def direction_check(self):
+        if (player.pos.x - self.pos.x < 0 and self.direction == 0):
+            return 1
+        elif (player.pos.x - self.pos.x > 0 and self.direction == 1):
+            return 1
+        else:
+            return 0
+
+    def turn(self): ######################################################################################### self.wait is not decreasing fast enough
+        if self.wait > 0:
+            self.wait -= 1
+
+        elif int(self.wait) <= 0:
+            self.turning = 0
+        print("turning")
+        if (self.direction):
+            self.direction = 0
+            self.image = pygame.image.load("images/enemy2.png")
+        else:
+            self.direction = 1
+            self.image = pygame.image.load("images/enemy2_L.png")
+
+
+
 class FireBall(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.direction = player.direction
         if self.direction == "RIGHT":
-            self.image = pygame.image.load("images/fireball1_R.png")
+            self.image = pygame.image.load("images/Shadow_Orb.png")
+            self.image = pygame.transform.scale(self.image, (15, 15))
         else:
-            self.image = pygame.image.load("images/fireball1_L.png")
+            self.image = pygame.image.load("images/Shadow_Orb.png")
+            self.image = pygame.transform.scale(self.image, (15, 15))
         self.rect = self.image.get_rect(center=player.pos)
         self.rect.x = player.pos.x
         self.rect.y = player.pos.y - 40
@@ -638,10 +775,10 @@ class FireBall(pygame.sprite.Sprite):
         # Runs while the fireball is still within the screen w/ extra margin
         if -10 < self.rect.x < 710:
             if self.direction == "RIGHT":
-                self.image = pygame.image.load("images/fireball1_R.png")
+                self.image = pygame.image.load("images/Shadow_Orb.png")
                 displaysurface.blit(self.image, self.rect)
             else:
-                self.image = pygame.image.load("images/fireball1_L.png")
+                self.image = pygame.image.load("images/Shadow_Orb.png")
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
@@ -680,7 +817,7 @@ Enemies = pygame.sprite.Group()
 #Enemies = []
 #Enemies.add(enemy)
 
-castle = Castle()
+Map = Map()
 handler = EventHandler()
 stage_display = StageDisplay()
 
@@ -700,8 +837,9 @@ status_bar = StatusBar()
 while True:
     #print(player.experiance)
 
-    #player.mana = 12  # cheat code 1
-
+    #player.health = 12  # cheat code 1
+    #player.mana = 12  # cheat code 2
+    #nEventHandler.phase = 100  # cheat code 3
 
     a = datetime.datetime.now()
     #print(Enemies)
@@ -741,20 +879,31 @@ while True:
                 enemy = Enemy()
                 Enemies.add(enemy)
                 handler.enemy_count += 1
+                handler.next_level_started = False
+
+        if event.type == handler.enemy_generation2:
+            if handler.enemy_count < handler.stage_enemies[handler.stage - 1]:
+                enemy = Enemy2()
+                Enemies.add(enemy)
+                handler.enemy_count += 1
+                handler.next_level_started = False
+
 
                 # Event handling for a range of different key presses
         # Event handling for a range of different key presses
         if event.type == pygame.KEYDOWN and cursor.wait == 0:
-            if 300 < player.rect.x < 600 and event.key == pygame.K_e:
+            if 300 < player.rect.x < 600 and event.key == pygame.K_e and handler.world == 0:
                 handler.stage_handler()
                 #print("castle range")
             if event.key == pygame.K_n:
-                if Enemies != None:
+                if Enemies != None  and not (handler.next_level_started): #########################################################################################################
                     if handler.battle == True and len(Enemies) == 0:
+                        handler.next_level_started = True
                         handler.next_stage()
                         print("test")
                         stage_display = StageDisplay()
                         stage_display.display = True
+
 
                     # Event handling for a range of different key presses
             if event.key == pygame.K_SPACE or event.key == pygame.K_w:
@@ -782,7 +931,7 @@ while True:
     # Rendering Sprites
     background.render()
     ground.render()
-    castle.update()
+    Map.update()
     button.render(button.imgdisp)
     cursor.hover()
 
@@ -793,7 +942,7 @@ while True:
 
     health.render()
 
-    if Enemies != None: ##################################### check if array is empty ###################################################################################################################################################
+    if Enemies != None:
         for entity in Enemies:
             entity.update()
             entity.move()
@@ -815,6 +964,7 @@ while True:
 
     for ball in Fireballs:
         ball.fire()
+
 
     player.move()
     player.update()
