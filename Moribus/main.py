@@ -6,7 +6,7 @@ import random
 from tkinter import filedialog
 from tkinter import *
 import datetime
-from music-manager import MusicManager
+
 
 import time #######################################################################################new
 
@@ -482,22 +482,6 @@ class EventHandler():
 
     # Code for when the next stage is clicked (reminder: ask question about this)
 
-    class MusicManager:
-        def __init__(self):
-            super().__init__()
-            self.volume = 0.05  # Default Volume
-
-        def playsoundtrack(self, music, num, vol):
-            pygame.mixer.music.set_volume(vol)
-            pygame.mixer.music.load(music)
-            pygame.mixer.music.play(num)
-
-        def playsound(self, sound, vol):
-            sound.set_volume(vol)
-            sound.play()
-
-        def stop(self):
-            pygame.mixer.music.stop()
 
 
     def stage_handler(self):
@@ -893,13 +877,10 @@ handler = EventHandler()
 stage_display = StageDisplay()
 
 # Music and Sound
-soundtrack = ["Twilight_Plains_music", "Sabreclaw_wastelands_music"]
+#soundtrack = ["Twilight_Plains_music", "Sabreclaw_wastelands_music"]
 #swordtrack = [pygame.mixer.Sound("sword1.wav"), pygame.mixer.Sound("sword2.wav")]
 #fsound = pygame.mixer.Sound("fireball_sound.wav")
 #hit = pygame.mixer.Sound("enemy_hit.wav")
-
-mmanager = MusicManager()
-mmanager.playsoundtrack(soundtrack[0], -1, 0.05)
 
 
 def gravity_check(self):
