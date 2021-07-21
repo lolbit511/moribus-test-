@@ -515,7 +515,7 @@ class EventHandler():
         button.imgdisp = 1
         Map.hide = True
         self.battle = True
-        mmanager.playsoundtrack(soundtrack[0], -1, 0.05)
+        #mmanager.playsoundtrack(soundtrack[0], -1, 0.05)
 
     def world2(self):
         self.root.destroy()
@@ -528,7 +528,7 @@ class EventHandler():
         button.imgdisp = 1
         Map.hide = True
         self.battle = True
-        mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
+        #mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
 
     def world3(self):
         button.imgdisp = 1
