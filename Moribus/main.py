@@ -6,9 +6,13 @@ import random
 from tkinter import filedialog
 from tkinter import *
 import datetime
+from music-manager import MusicManager
 
 import time #######################################################################################new
 
+
+# freq, size, channel, buffsize
+pygame.mixer.pre_init(44100, 16, 1, 512)
 pygame.init()
 
 #main variables
@@ -478,7 +482,22 @@ class EventHandler():
 
     # Code for when the next stage is clicked (reminder: ask question about this)
 
+    class MusicManager:
+        def __init__(self):
+            super().__init__()
+            self.volume = 0.05  # Default Volume
 
+        def playsoundtrack(self, music, num, vol):
+            pygame.mixer.music.set_volume(vol)
+            pygame.mixer.music.load(music)
+            pygame.mixer.music.play(num)
+
+        def playsound(self, sound, vol):
+            sound.set_volume(vol)
+            sound.play()
+
+        def stop(self):
+            pygame.mixer.music.stop()
 
 
     def stage_handler(self):
@@ -512,6 +531,7 @@ class EventHandler():
         button.imgdisp = 1
         Map.hide = True
         self.battle = True
+        mmanager.playsoundtrack(soundtrack[0], -1, 0.05)
 
     def world2(self):
         self.root.destroy()
@@ -524,6 +544,7 @@ class EventHandler():
         button.imgdisp = 1
         Map.hide = True
         self.battle = True
+        mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
 
     def world3(self):
         button.imgdisp = 1
@@ -561,6 +582,10 @@ class Enemy(pygame.sprite.Sprite):
         #self.attacking = False
         self.cooldown = False
         #self.attack_frame = 0
+
+        # dummy variables (prevents crash)
+        self.boltCD = 150
+        self.fired = False
 
 
         # Sets the intial position of the enemy
@@ -640,7 +665,40 @@ class Enemy(pygame.sprite.Sprite):
         displaysurface.blit(self.image, (self.pos.x, self.pos.y))
 
 
-class Enemy2(pygame.sprite.Sprite):
+class Bolt(pygame.sprite.Sprite):
+    def __init__(self, x, y, d):
+        super().__init__()
+        self.image = pygame.image.load("images/Shadow_Orb.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x + 15
+        self.rect.y = y + 20
+        self.direction = d
+
+    def fire(self):
+        # Runs while the fireball is still within the screen w/ extra margin
+        if -10 < self.rect.x < 710:
+            if self.direction == 0:
+                self.image = pygame.image.load("images/Shadow_Orb.png")
+                displaysurface.blit(self.image, self.rect)
+            else:
+                self.image = pygame.image.load("images/Shadow_Orb.png")
+                displaysurface.blit(self.image, self.rect)
+
+            if self.direction == 0:
+                self.rect.move_ip(12, 0)
+            else:
+                self.rect.move_ip(-12, 0)
+        else:
+            self.kill()
+
+        # Checks for collision with the Player
+        hits = pygame.sprite.spritecollide(self, Playergroup, False)
+        if hits:
+            player.player_hit()
+            self.kill()
+
+
+class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
     def __init__(self):
         super().__init__()
         self.pos = vec(0, 0)
@@ -648,6 +706,8 @@ class Enemy2(pygame.sprite.Sprite):
         self.wait = 0
         self.wait_status = False
         self.turning = 0
+        self.boltCD = 150
+        self.fired = False
 
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
         self.vel.x = random.randint(2, 6) / 3  # Randomized velocity of the generated enemy
@@ -674,10 +734,18 @@ class Enemy2(pygame.sprite.Sprite):
         elif self.pos.x <= 0:
             self.direction = 0
         # Updates position with new values
-        if self.wait > 60:
+        if self.wait > 50:
             self.wait_status = True
         elif int(self.wait) <= 0:
             self.wait_status = False
+
+        if self.wait_status == True:
+            rand_num = numpy.random.uniform(0, 50)
+            if int(rand_num) == 25 and self.boltCD > 0 and self.fired == False:
+                self.fired = True
+                bolt = Bolt(self.pos.x, self.pos.y, self.direction)
+                Bolts.add(bolt)
+            self.wait -= 1
 
         if (self.direction_check()):
             self.turn()
@@ -695,6 +763,7 @@ class Enemy2(pygame.sprite.Sprite):
             self.wait += self.vel.x
 
         self.rect.topleft = self.pos  # Updates rect
+
 
 
 
@@ -805,6 +874,7 @@ Items = pygame.sprite.Group()
 button = PButton()
 cursor = Cursor()
 Fireballs = pygame.sprite.Group()
+Bolts = pygame.sprite.Group()
 
 player = Player()
 Playergroup = pygame.sprite.Group()
@@ -814,12 +884,22 @@ health = HealthBar()
 
 #enemy = Enemy()
 Enemies = pygame.sprite.Group()
+
 #Enemies = []
 #Enemies.add(enemy)
 
 Map = Map()
 handler = EventHandler()
 stage_display = StageDisplay()
+
+# Music and Sound
+soundtrack = ["Twilight_Plains_music", "Sabreclaw_wastelands_music"]
+#swordtrack = [pygame.mixer.Sound("sword1.wav"), pygame.mixer.Sound("sword2.wav")]
+#fsound = pygame.mixer.Sound("fireball_sound.wav")
+#hit = pygame.mixer.Sound("enemy_hit.wav")
+
+mmanager = MusicManager()
+mmanager.playsoundtrack(soundtrack[0], -1, 0.05)
 
 
 def gravity_check(self):
@@ -837,7 +917,7 @@ status_bar = StatusBar()
 while True:
     #print(player.experiance)
 
-    #player.health = 12  # cheat code 1
+    #player.health = 5  # cheat code 1
     #player.mana = 12  # cheat code 2
     #nEventHandler.phase = 100  # cheat code 3
 
@@ -944,12 +1024,19 @@ while True:
 
     if Enemies != None:
         for entity in Enemies:
+            print(entity.boltCD)
             entity.update()
             entity.move()
             entity.render()
+            if entity.boltCD > 0 and entity.fired == True: ################# ################# ################# ################# #################
+                entity.boltCD -= 1
+            else:
+                entity.boltCD = 150
+                entity.fired = False
 
 
-    ################# had to add this to prevent a glitch where the player sprite will go to its full size when in the alternative walking frames
+
+    #################
 
 
     # Player related functions
@@ -964,6 +1051,9 @@ while True:
 
     for ball in Fireballs:
         ball.fire()
+    for bolt in Bolts:
+        bolt.fire()
+
 
 
     player.move()
