@@ -81,7 +81,11 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
 
         super().__init__()
-        self.image = pygame.image.load("images/playerWalk1.png")
+        self.start = False
+        self.startdone = False
+
+        self.image = pygame.image.load("images/player.png")
+        #self.imageorg = self.image
         #cropped = pygame.Surface((80, 80))
         #cropped.blit(self.image, (-80, -80))
         #self.subsurface = pygame.Surface.subsurface(20, 2, 80, 98)
@@ -99,6 +103,8 @@ class Player(pygame.sprite.Sprite):
         self.jumping = False
         self.running = False
         self.move_frame = 0
+        self.jumpheight = -13
+        self.jump_timer = 250
         # Combat
         self.attacking = False
         self.attack_frame = 0
@@ -224,7 +230,14 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.pos  # Updates rect
 
 
+
     def update(self): #player
+        if self.jumpheight == -18:
+            self.jump_timer -= 1
+        if self.jump_timer < 0:
+            self.jumpheight = -13
+            self.jump_timer = 250
+
         if cursor.wait == 1: return
         # Move the character to the next frame if conditions are met
         if self.jumping == False and self.running == True:
@@ -267,6 +280,7 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         self.rect.x += 1
 
+
         # Check to see if payer is in contact with the ground
         hits = pygame.sprite.spritecollide(self, ground_group, False)
 
@@ -275,7 +289,7 @@ class Player(pygame.sprite.Sprite):
         # If touching the ground, and not currently jumping, cause the player to jump.
         if hits and not self.jumping:
             self.jumping = True
-            self.vel.y = -18
+            self.vel.y = self.jumpheight
 
 
 class Item(pygame.sprite.Sprite):
@@ -285,6 +299,9 @@ class Item(pygame.sprite.Sprite):
             self.image = pygame.image.load("images/heart.png")
         elif itemtype == 2:
             self.image = pygame.image.load("images/coin.png")
+            self.image = pygame.transform.scale(self.image, (30, 30))
+        elif itemtype == 3:
+            self.image = pygame.image.load("images/jump_potion.gif")
             self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect()
         self.type = itemtype
@@ -302,11 +319,15 @@ class Item(pygame.sprite.Sprite):
         if hits:
             if player.health < 5 and self.type == 1:
                 player.health += 1
-                health.image = health_ani[player.health] ################################################################################################################################################
+                health.image = health_ani[player.health]
                 self.kill()
             if self.type == 2:
                 # handler.money += 1
                 player.coin += 1
+                self.kill()
+            if self.type == 3:
+                print("jump boosted")
+                player.jumpheight = -18
                 self.kill()
 
 
@@ -353,8 +374,6 @@ class Cursor(pygame.sprite.Sprite):
 
 
 
-
-
 class Map(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -364,6 +383,27 @@ class Map(pygame.sprite.Sprite):
     def update(self):
         if self.hide == False:
             displaysurface.blit(self.image, (400, 100))
+
+
+class MenuDisplay:
+    def __init__(self):
+        super().__init__()
+        self.headingFont = pygame.font.SysFont('Verdana', 30)
+        self.text = self.headingFont.render("PRESS SPACE TO START", True, (255, 255, 255))
+        self.rect = self.text.get_rect()
+        self.posx = 175
+        self.posy = 100
+        self.display = True
+        self.clear = False
+    def move_display(self):
+        # Create the text to be displayed
+        #self.text = self.headingFont.render(self.text, True, (157, 3, 252))
+        if self.posx < 700:
+            self.posx += 0
+            displaysurface.blit(self.text, (self.posx, self.posy))
+        else:
+            self.display = False
+            self.kill()
 
 
 class StageDisplay(pygame.sprite.Sprite):
@@ -629,6 +669,8 @@ class Enemy(pygame.sprite.Sprite):
                 item_no = 1
             elif rand_num > 5 and rand_num <= 15:
                 item_no = 2
+            elif rand_num > 15 and rand_num < 50:
+                item_no = 3
 
             if item_no != 0:
                 # Add Item to Items group
@@ -694,11 +736,16 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
         self.fired = False
 
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
-        self.vel.x = random.randint(2, 6) / 3  # Randomized velocity of the generated enemy
+        self.vel.x = random.randint(2, 6) / 3  # Randomized velocity of the generated enemyd
         self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
 
-        if self.direction == 0: self.image = pygame.image.load("images/enemy2.png")
-        if self.direction == 1: self.image = pygame.image.load("images/enemy2_L.png")
+
+        if self.direction == 0:
+            self.image = pygame.image.load("images/enemy2.png")
+        elif self.direction == 1:
+            self.image = pygame.image.load("images/enemy2_L.png")
+
+        self.image = pygame.transform.scale(self.image, (105, 105))
         self.rect = self.image.get_rect()
 
         # Sets the initial position of the enemy
@@ -793,7 +840,7 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
         else:
             return 0
 
-    def turn(self): ######################################################################################### self.wait is not decreasing fast enough
+    def turn(self): # self.wait is not decreasing fast enough
         if self.wait > 0:
             self.wait -= 1
 
@@ -803,9 +850,13 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
         if (self.direction):
             self.direction = 0
             self.image = pygame.image.load("images/enemy2.png")
+
+            self.image = pygame.transform.scale(self.image, (105, 105))
         else:
             self.direction = 1
             self.image = pygame.image.load("images/enemy2_L.png")
+
+            self.image = pygame.transform.scale(self.image, (105, 105))
 
 
 
@@ -814,10 +865,10 @@ class FireBall(pygame.sprite.Sprite):
         super().__init__()
         self.direction = player.direction
         if self.direction == "RIGHT":
-            self.image = pygame.image.load("images/Shadow_Orb.png")
+            self.image = pygame.image.load("images/fireball1_L.png")
             self.image = pygame.transform.scale(self.image, (15, 15))
         else:
-            self.image = pygame.image.load("images/Shadow_Orb.png")
+            self.image = pygame.image.load("images/fireball1_R.png")
             self.image = pygame.transform.scale(self.image, (15, 15))
         self.rect = self.image.get_rect(center=player.pos)
         self.rect.x = player.pos.x
@@ -828,10 +879,10 @@ class FireBall(pygame.sprite.Sprite):
         # Runs while the fireball is still within the screen w/ extra margin
         if -10 < self.rect.x < 710:
             if self.direction == "RIGHT":
-                self.image = pygame.image.load("images/Shadow_Orb.png")
+                self.image = pygame.image.load("images/fireball1_L.png")
                 displaysurface.blit(self.image, self.rect)
             else:
-                self.image = pygame.image.load("images/Shadow_Orb.png")
+                self.image = pygame.image.load("images/fireball1_R.png")
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
@@ -847,7 +898,7 @@ class FireBall(pygame.sprite.Sprite):
 
 
 
-attackCD = 1 ###############################################
+attackCD = 1
 
 background = Background()
 ground = Ground()
@@ -875,6 +926,7 @@ Enemies = pygame.sprite.Group()
 Map = Map()
 handler = EventHandler()
 stage_display = StageDisplay()
+menu_display = MenuDisplay()
 
 # Music and Sound
 #soundtrack = ["Twilight_Plains_music", "Sabreclaw_wastelands_music"]
@@ -882,6 +934,8 @@ stage_display = StageDisplay()
 #fsound = pygame.mixer.Sound("fireball_sound.wav")
 #hit = pygame.mixer.Sound("enemy_hit.wav")
 
+
+player.image = pygame.image.load("images/empty.png")
 
 def gravity_check(self):
     hits = pygame.sprite.spritecollide(player, ground_group, False)
@@ -899,7 +953,7 @@ while True:
     #print(player.experiance)
 
     #player.health = 5  # cheat code 1
-    #player.mana = 12  # cheat code 2
+    player.mana = 12  # cheat code 2
     #nEventHandler.phase = 100  # cheat code 3
 
     a = datetime.datetime.now()
@@ -957,7 +1011,7 @@ while True:
                 handler.stage_handler()
                 #print("castle range")
             if event.key == pygame.K_n:
-                if Enemies != None  and not (handler.next_level_started): #########################################################################################################
+                if Enemies != None  and not (handler.next_level_started):
                     if handler.battle == True and len(Enemies) == 0:
                         handler.next_level_started = True
                         handler.next_stage()
@@ -967,8 +1021,11 @@ while True:
 
 
                     # Event handling for a range of different key presses
-            if event.key == pygame.K_SPACE or event.key == pygame.K_w:
+            if event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE:
                 player.jump()
+            if event.key == pygame.K_SPACE and player.startdone == False:
+                player.start = True
+
 
 
             if event.key == pygame.K_LEFT:
@@ -1005,11 +1062,12 @@ while True:
 
     if Enemies != None:
         for entity in Enemies:
-            print(entity.boltCD)
+            #print(entity.boltCD)
             entity.update()
             entity.move()
             entity.render()
-            if entity.boltCD > 0 and entity.fired == True: ################# ################# ################# ################# #################
+
+            if entity.boltCD > 0 and entity.fired == True:
                 entity.boltCD -= 1
             else:
                 entity.boltCD = 150
@@ -1036,17 +1094,31 @@ while True:
         bolt.fire()
 
 
+    if player.startdone == False:
+        if player.start == True : ###############################################################################################################################################
+            player.image = pygame.transform.scale(player.image, (80, 80))
+            player.start = False
+            menu_display.display = False
+            player.startdone = True
+    else:
+        player.update()
+        player.move()
 
-    player.move()
-    player.update()
+
     #print("player rect:",player.rect)
 
 
-    # Render stage display ######################################
+    # Render stage display
     if stage_display.display == True:
         stage_display.move_display()
     if stage_display.clear == True:
         stage_display.stage_clear()
+
+    # Render Starting screen
+    if menu_display.display == True:
+        menu_display.move_display()
+    if menu_display.clear == True:
+        menu_display.stage_clear()
 
     #print(stage_display.clear)
     # Status bar update and render
@@ -1054,9 +1126,11 @@ while True:
     status_bar.update_draw()
     handler.update()
 
+
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
 
 
     b = datetime.datetime.now()
     #print(b - a)
+    #print(player.jump_timer)
