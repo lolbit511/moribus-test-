@@ -36,6 +36,7 @@ color_white = (255,255,255)
 
 
 
+
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moribus")
 
@@ -68,12 +69,13 @@ class HealthBar(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("images/heart5.png")
+        self.image = pygame.transform.scale(self.image, (300, 130))
 
     def render(self):
         displaysurface.blit(self.image, (10, 10))
 
 # Moved health bar animations out so all other classes have easy access
-health_ani = [pygame.image.load("images/heart0.png"), pygame.image.load("images/heart.png"),
+health_ani = [pygame.image.load("images/heart0.png"), pygame.image.load("images/heart1.png"),
                       pygame.image.load("images/heart2.png"), pygame.image.load("images/heart3.png"),
                       pygame.image.load("images/heart4.png"), pygame.image.load("images/heart5.png")]
 
@@ -110,7 +112,7 @@ class Player(pygame.sprite.Sprite):
         self.attack_frame = 0
         self.attCD = 40
 
-        self.experiance = 0
+        self.experience = 0
         self.mana = 0
         self.coin = 0
         self.magic_cooldown = 1
@@ -160,20 +162,21 @@ class Player(pygame.sprite.Sprite):
         #print(self.att_ani_L)
 
 
-    def player_hit(self): #new
+    def player_hit(self): #player
+        if GO.GameEnded == False:
 
-        #print("entering player hit")
-        if self.cooldown == False:
+            #print("entering player hit")
+            if self.cooldown == False:
 
-            self.cooldown = True  # Enable the cooldown
-            pygame.time.set_timer(hit_cooldown, 1000)  # Resets cooldown in 1 second
+                self.cooldown = True  # Enable the cooldown
+                pygame.time.set_timer(hit_cooldown, 1000)  # Resets cooldown in 1 second
 
-            self.health = self.health - 1
-            health.image = health_ani[self.health]
+                self.health = self.health - 1
+                health.image = health_ani[self.health]
 
-            if self.health <= 0:
-                self.kill()
-                pygame.display.update()
+                if self.health <= 0:
+                    self.kill()
+                    pygame.display.update()
 
     def move(self): #player
         if cursor.wait == 1: return
@@ -338,13 +341,20 @@ class PButton(pygame.sprite.Sprite):
         self.imgdisp = 0
 
     def render(self, num):
-        if (num == 0):
+        if (num == 2):
             self.image = pygame.image.load("images/home_small.png")
+            self.vec = vec(560, 300)
         elif (num == 1):
             if cursor.wait == 0:
                 self.image = pygame.image.load("images/pause_small.png")
             else:
                 self.image = pygame.image.load("images/play_small.png")
+        elif (num == 3):
+            self.image = pygame.image.load("images/Shadow_Orb.png")
+            self.vec = vec(500, 300)
+        elif (num == 4):
+            self.image = pygame.image.load("images/heart.png")
+            self.vec = vec(440, 300)
 
         displaysurface.blit(self.image, self.vec)
 
@@ -381,7 +391,7 @@ class Map(pygame.sprite.Sprite):
         self.image = pygame.image.load("images/Map.png")
 
     def update(self):
-        if self.hide == False:
+        if self.hide == False and handler.world == 0:
             displaysurface.blit(self.image, (400, 100))
 
 
@@ -404,6 +414,25 @@ class MenuDisplay:
         else:
             self.display = False
             self.kill()
+
+
+
+class GameOver(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.headingFont = pygame.font.SysFont('Verdana', 60)
+        self.text = self.headingFont.render(("Game Over"), True, (157, 3, 252))
+        self.rect = self.text.get_rect()
+        self.posx = 175
+        self.posy = 100
+        self.display = False
+        self.GameEnded = False
+        self.clear = False
+
+    def GO_display(self):
+        if player.health == 0:
+            displaysurface.blit(self.text, (self.posx, self.posy))
+            self.GameEnded = True
 
 
 class StageDisplay(pygame.sprite.Sprite):
@@ -438,6 +467,7 @@ class StageDisplay(pygame.sprite.Sprite):
             self.display = False
             self.kill()
 
+
 class StatusBar(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -447,7 +477,7 @@ class StatusBar(pygame.sprite.Sprite):
     def update_draw(self):
         # Create the text to be displayed
         text1 = smallerfont.render("STAGE: " + str(handler.stage), True, color_white)
-        text2 = smallerfont.render("EXP: " + str(player.experiance), True, color_white)
+        text2 = smallerfont.render("EXP: " + str(player.experience), True, color_white)
         text3 = smallerfont.render("MANA: " + str(player.mana), True, color_white)
         text4 = smallerfont.render("PURSE: " + str(player.coin), True, color_white)
         text5 = smallerfont.render("FPS: " + str(int(FPS_CLOCK.get_fps())), True, color_white)
@@ -478,7 +508,7 @@ class EventHandler():
         print(self.stage_enemies)
 
     def next_stage(self):  # Code for when the next stage is clicked
-        button.imgdisp = 1
+
         self.stage += 1
         self.enemy_count = 0
         self.dead_enemy_count = 0
@@ -520,8 +550,36 @@ class EventHandler():
         ground.image = pygame.image.load("images/Ground.png")
         ground.image = pygame.transform.scale(ground.image, (WIDTH,50))
 
-    # Code for when the next stage is clicked (reminder: ask question about this)
+    def saveG(self):
+        f = open("guru99.txt", "w")
+        # f=open("guru99.txt","a+")
+        #for i in range(10):
 
+        # everything that needs to be saved
+        f.write(str(handler.stage) + "\n")
+        f.write(str(player.experience) + "\n")
+        f.write(str(player.mana) + "\n")
+        f.write(str(player.coin) + "\n")
+        f.write(str(player.health) +"\n")
+
+        f.close()
+
+
+    def loadG(self):
+        #Open the file back and read the contents
+        f=open("guru99.txt", "r")
+        if f.mode == 'r':
+            handler.stage = int(f.readline())
+            player.experience = int(f.readline())
+            player.mana = int(f.readline())
+            player.coin = int(f.readline())
+            player.health = int(f.readline())
+
+        #or, readlines reads the individual line into a list
+        #fl = f.readlines()
+        #for x in fl:
+
+            #print(x)
 
 
     def stage_handler(self):
@@ -533,7 +591,7 @@ class EventHandler():
                          command=self.world1)
         button2 = Button(self.root, text="[Dungeon] Sabreclaw Wastelands", width=width, height=2,
                          command=self.world2)
-        button3 = Button(self.root, text="[Town] Tarnstead Village", width=width, height=2,
+        button3 = Button(self.root, text="[Town] Tarnstead Outlook", width=width, height=2,
                          command=self.world3)
         button4 = Button(self.root, text="[Dungeon] Iceborne Crypts", width=width, height=2,
                          command=self.world4)
@@ -552,37 +610,37 @@ class EventHandler():
         self.root.destroy()
         self.world = 1
         pygame.time.set_timer(self.enemy_generation, 2000)
-        button.imgdisp = 1
+
         Map.hide = True
         self.battle = True
         #mmanager.playsoundtrack(soundtrack[0], -1, 0.05)
 
     def world2(self):
         self.root.destroy()
-        background.bgimage = pygame.image.load("images/desert.jpg")
-        ground.image = pygame.image.load("images/desert_ground.png")
+        background.bgimage = pygame.image.load("images/wasteland.png")
+        ground.image = pygame.image.load("images/Ground.png")
 
         pygame.time.set_timer(self.enemy_generation2, 2500)
 
         self.world = 2
-        button.imgdisp = 1
+
         Map.hide = True
         self.battle = True
         #mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
 
     def world3(self):
-        button.imgdisp = 1
+
         self.world = 3
         self.battle = True
         # Empty for now
 
     def world4(self):
-        button.imgdisp = 1
+
         self.battle = True
         # Empty for now
 
     def world5(self):
-        button.imgdisp = 1
+
         self.battle = True
         # Empty for now
 
@@ -637,14 +695,15 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.center = self.pos  # Updates rect
 
     def player_hit(self): #enemy
+        if GO.GameEnded != True:
         # print("entering player hit")
-        if self.cooldown == False:
-            ####################################print("entered hit condition")
-            self.cooldown = True  # Enable the cooldown
-            pygame.time.set_timer(hit_cooldown, 1000)  # Resets cooldown in 1 second
+            if self.cooldown == False:
+                ####################################print("entered hit condition")
+                self.cooldown = True  # Enable the cooldown
+                pygame.time.set_timer(hit_cooldown, 1000)  # Resets cooldown in 1 second
 
-            ####################################print("hit")
-            pygame.display.update()
+                ####################################print("hit")
+                pygame.display.update()
 
     def update(self): #enemy
         if cursor.wait == 1: return
@@ -659,7 +718,7 @@ class Enemy(pygame.sprite.Sprite):
         # Activates upon either of the two expressions being true
         if hits and player.attacking == True or f_hits:
             if player.mana < 100: player.mana += self.mana  # Release mana
-            player.experiance += 1  # Release expeiriance
+            player.experience += 1  # Release expeiriance
             self.kill()
             handler.dead_enemy_count += 1
             #print(handler.dead_enemy_count)
@@ -694,20 +753,20 @@ class Enemy(pygame.sprite.Sprite):
 class Bolt(pygame.sprite.Sprite):
     def __init__(self, x, y, d):
         super().__init__()
-        self.image = pygame.image.load("images/Shadow_Orb.png")
+        self.image = pygame.image.load("images/sabreclaw.png")
         self.rect = self.image.get_rect()
         self.rect.x = x + 15
         self.rect.y = y + 20
         self.direction = d
 
     def fire(self):
-        # Runs while the fireball is still within the screen w/ extra margin
+        # Runs while the fireball is still within the screen w/ extra margind
         if -10 < self.rect.x < 710:
             if self.direction == 0:
-                self.image = pygame.image.load("images/Shadow_Orb.png")
+                self.image = pygame.image.load("images/sabreclaw.png")
                 displaysurface.blit(self.image, self.rect)
             else:
-                self.image = pygame.image.load("images/Shadow_Orb.png")
+                self.image = pygame.transform.flip(pygame.image.load("images/sabreclaw.png"), True, False)
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == 0:
@@ -799,6 +858,7 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
 
 
     def update(self):
+
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
 
@@ -811,7 +871,7 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
             handler.dead_enemy_count += 1
 
             if player.mana < 100: player.mana += self.mana  # Release mana
-            player.experiance += 1  # Release expeiriance
+            player.experience += 1  # Release expeiriance
 
             rand_num = numpy.random.uniform(0, 100)
             item_no = 0
@@ -895,8 +955,41 @@ class FireBall(pygame.sprite.Sprite):
             player.attacking = False
 
 
+class swing(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.direction = player.direction
+        if self.direction == "RIGHT":
+            self.image = pygame.transform.flip(pygame.image.load("images/swing.png"), True, False)
+            self.image = pygame.transform.scale(self.image, (105, 105))
+        else:
+            self.image = pygame.image.load("images/swing.png")
+            self.image = pygame.transform.scale(self.image, (105, 105))
+        self.rect = self.image.get_rect(center=player.pos)
+        self.rect.x = player.pos.x
+        self.rect.y = player.pos.y - 70
 
+    def attack(self):
+        print(abs(player.rect.x - self.rect.x))
 
+        if abs(player.rect.x - self.rect.x) < 100:
+            print("passed")
+            if self.direction == "RIGHT":
+                #self.image = pygame.transform.flip(pygame.image.load("images/swing.png"), True, False)
+                #self.image = pygame.transform.scale(self.image, (105, 105))
+                displaysurface.blit(self.image, self.rect)
+            else:
+                #self.image = pygame.image.load("images/swing.png")
+                #self.image = pygame.transform.scale(self.image, (105, 105))
+                displaysurface.blit(self.image, self.rect)
+
+            if self.direction == "RIGHT":
+                self.rect.move_ip(3, 0)
+            else:
+                self.rect.move_ip(-3, 0)
+        else:
+            self.kill()
+            player.attacking = False
 
 attackCD = 1
 
@@ -906,10 +999,15 @@ ground_group = pygame.sprite.Group()
 ground_group.add(ground)
 
 Items = pygame.sprite.Group()
-button = PButton()
+Pause = PButton()
+Home = PButton()
+savebutton = PButton()
+loadbutton = PButton()
+
 cursor = Cursor()
 Fireballs = pygame.sprite.Group()
 Bolts = pygame.sprite.Group()
+Swings = pygame.sprite.Group()
 
 player = Player()
 Playergroup = pygame.sprite.Group()
@@ -927,6 +1025,7 @@ Map = Map()
 handler = EventHandler()
 stage_display = StageDisplay()
 menu_display = MenuDisplay()
+GO = GameOver()
 
 # Music and Sound
 #soundtrack = ["Twilight_Plains_music", "Sabreclaw_wastelands_music"]
@@ -950,10 +1049,10 @@ def gravity_check(self):
 status_bar = StatusBar()
 
 while True:
-    #print(player.experiance)
+    #print(player.experience)
 
     #player.health = 5  # cheat code 1
-    player.mana = 12  # cheat code 2
+    #player.mana = 12  # cheat code 2
     #nEventHandler.phase = 100  # cheat code 3
 
     a = datetime.datetime.now()
@@ -970,14 +1069,24 @@ while True:
             # For events that occur upon clicking the mouse (left click)
         if event.type == pygame.MOUSEBUTTONDOWN:
             if 620 <= mouse[0] <= 670 and 300 <= mouse[1] <= 345:
-                if button.imgdisp == 1:
-                    cursor.pause()
-                elif button.imgdisp == 0:
-                    handler.home()
+                cursor.pause()
+            if 560 <= mouse[0] <= 610 and 300 <= mouse[1] <= 345:
+                handler.home()
+            if 500 <= mouse[0] <= 550 and 300 <= mouse[1] <= 345:
+                handler.saveG()
+            if 440 <= mouse[0] <= 490 and 300 <= mouse[1] <= 345:
+                handler.loadG()
+
+
             elif 0 <= mouse[0] <= 700 and 0 <= mouse[1] <= 300 and event.button == 1: # attacking
-                player.attack()
-                player.attacking = True
-                print("attack")
+                #player.attack()
+                #player.attacking = True
+                #print("attack")
+                #print("swung")
+                if player.attacking == False:
+                    player.attacking = True
+                    SW = swing()
+                    Swings.add(SW)
             elif 0 <= mouse[0] <= 700 and 0 <= mouse[1] <= 300 and player.magic_cooldown == 1 and event.button == 3:
                 print("fired")
                 if player.mana >= 6:
@@ -1050,7 +1159,10 @@ while True:
     background.render()
     ground.render()
     Map.update()
-    button.render(button.imgdisp)
+    Pause.render(1)
+    Home.render(2)
+    savebutton.render(3)
+    loadbutton.render(4)
     cursor.hover()
 
     if player.health > 0:
@@ -1088,6 +1200,8 @@ while True:
         i.render()
         i.update()
 
+    for SW in Swings:
+        SW.attack()
     for ball in Fireballs:
         ball.fire()
     for bolt in Bolts:
@@ -1095,7 +1209,7 @@ while True:
 
 
     if player.startdone == False:
-        if player.start == True : ###############################################################################################################################################
+        if player.start == True :
             player.image = pygame.transform.scale(player.image, (80, 80))
             player.start = False
             menu_display.display = False
@@ -1122,9 +1236,18 @@ while True:
 
     #print(stage_display.clear)
     # Status bar update and render
+
+    GO.GO_display()
+
     displaysurface.blit(status_bar.surf, (580, 5))
     status_bar.update_draw()
     handler.update()
+
+
+
+
+    health.image = pygame.transform.scale(health.image, (280, 90)) #####################################################################################################################################################################
+    background.bgimage = pygame.transform.scale(background.bgimage, (WIDTH, HEIGHT))
 
 
     pygame.display.update()
@@ -1132,5 +1255,5 @@ while True:
 
 
     b = datetime.datetime.now()
-    #print(b - a)
+    #print(GO.GameEnded)
     #print(player.jump_timer)
