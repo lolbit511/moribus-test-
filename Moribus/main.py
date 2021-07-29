@@ -192,16 +192,21 @@ class Player(pygame.sprite.Sprite):
 
         # Accelerates the player in the direction of the key press
         if player.attacking == False:
-            if pressed_keys[K_LEFT] or pressed_keys[K_a]:
+            pass
+        if pressed_keys[K_LEFT] or pressed_keys[K_a]:
                 self.acc.x = -ACC
 
-            if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
+
+        if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
                 self.acc.x = ACC
+
 
 
         # Formulas to calculate velocity while accounting for friction
         self.acc.x += self.vel.x * FRIC
         self.vel += self.acc
+        for SW in Swings:
+            SW.rect.x += self.vel.x + 0.5 * self.acc.x
         self.pos += self.vel + 0.5 * self.acc  # Updates Position with new values
 
         # This causes character warping from one point of the screen to the other
@@ -346,18 +351,18 @@ class PButton(pygame.sprite.Sprite):
 
     def render(self, num):
         if (num == 2):
-            self.image = pygame.image.load("images/home_small.png")
+            self.image = pygame.image.load("images/home.png")
             self.vec = vec(560, 300)
         elif (num == 1):
             if cursor.wait == 0:
-                self.image = pygame.image.load("images/pause_small.png")
+                self.image = pygame.image.load("images/pause.png")
             else:
-                self.image = pygame.image.load("images/play_small.png")
+                self.image = pygame.image.load("images/play.png")
         elif (num == 3):
-            self.image = pygame.image.load("images/Shadow_Orb.png")
+            self.image = pygame.image.load("images/save.png")
             self.vec = vec(500, 300)
         elif (num == 4):
-            self.image = pygame.image.load("images/heart.png")
+            self.image = pygame.image.load("images/load.png")
             self.vec = vec(440, 300)
 
         displaysurface.blit(self.image, self.vec)
@@ -721,7 +726,7 @@ class Enemy(pygame.sprite.Sprite):
 
 
         # Activates upon either of the two expressions being true
-        if hits and player.attacking == True or f_hits or s_hits:
+        if player.attacking == True and f_hits or s_hits:
             if player.mana < 100: player.mana += self.mana  # Release mana
             player.experience += 1  # Release expeiriance
             self.kill()
@@ -872,7 +877,7 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
         f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
 
         # Activates upon either of the two expressions being true
-        if hits and player.attacking == True or f_hits or s_hits:
+        if player.attacking == True and f_hits or s_hits:
             self.kill()
             handler.dead_enemy_count += 1
 
@@ -930,6 +935,9 @@ class FireBall(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.direction = player.direction
+
+
+
         if self.direction == "RIGHT":
             self.image = pygame.image.load("images/fireball1_L.png")
             self.image = pygame.transform.scale(self.image, (15, 15))
@@ -952,9 +960,9 @@ class FireBall(pygame.sprite.Sprite):
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
-                self.rect.move_ip(12, 0)
+                self.rect.move_ip(1, 0)
             else:
-                self.rect.move_ip(-12, 0)
+                self.rect.move_ip(-1, 0)
         else:
             self.kill()
             player.magic_cooldown = 1
@@ -965,44 +973,61 @@ class swing(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.direction = player.direction
-        self.swoop_ani_L = [pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False),pygame.transform.flip(pygame.image.load("images/swing2.png"), True, False)]
-        self.swoop_ani_L = [pygame.image.load("images/swing1.png"),pygame.image.load("images/swing2.png")]
+        self.swoop_ani_R = [pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False), (105, 105)),
+                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing2.png"), True, False), (105, 105)),
+                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing3.png"), True, False), (105, 105))]
+        self.swoop_ani_L = [pygame.transform.scale(pygame.image.load("images/swing1.png"),(105, 105)),
+                            pygame.transform.scale(pygame.image.load("images/swing2.png"),(105, 105)),
+                            pygame.transform.scale(pygame.image.load("images/swing3.png"),(105, 105))]
 
         if self.direction == "RIGHT":
-            self.image = pygame.transform.flip(pygame.image.load("images/swing.png"), True, False)
+            self.image = pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False)
             self.image = pygame.transform.scale(self.image, (105, 105))
         else:
-            self.image = pygame.image.load("images/swing.png")
+            self.image = pygame.image.load("images/swing1.png")
             self.image = pygame.transform.scale(self.image, (105, 105))
         self.rect = self.image.get_rect(center=player.pos)
 
         if self.direction == "RIGHT":
-            self.rect.x = player.pos.x + 10
+            self.rect.x = player.pos.x + 20
         else:
             self.rect.x = player.pos.x - 80
         self.rect.y = player.pos.y - 70
 
     def attack(self):
-        print(abs(player.rect.x - self.rect.x))
+        #print(abs(player.rect.x - self.rect.x))
+
+        self.rect.y = player.pos.y - 70
 
         if abs(player.rect.x - self.rect.x) < 100:
-            print("passed")
+            #print("passed")
             if self.direction == "RIGHT":
                 #self.image = pygame.transform.flip(pygame.image.load("images/swing.png"), True, False)
                 #self.image = pygame.transform.scale(self.image, (105, 105))
+
+                self.image = self.swoop_ani_R[(abs(player.rect.x - self.rect.x) // 30)-1]
+                #print((abs(player.rect.x - self.rect.x) // 30)-1)
                 displaysurface.blit(self.image, self.rect)
             else:
                 #self.image = pygame.image.load("images/swing.png")
                 #self.image = pygame.transform.scale(self.image, (105, 105))
+                #self.image = self.swoop_ani_L[abs(player.rect.x - self.rect.x) // 30]
+
+                self.image = self.swoop_ani_L[(abs(player.rect.x - self.rect.x) // 30) - 1]
+                #print((abs(player.rect.x - self.rect.x) // 30) - 1)
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
-                self.rect.move_ip(6, 0)
+                self.rect.move_ip(1.5, 0)
             else:
-                self.rect.move_ip(-6, 0)
+                self.rect.move_ip(-1.5, 0)
+            if player.direction != self.direction:
+                self.kill()
         else:
             self.kill()
             player.attacking = False
+
+
 
 attackCD = 1
 
@@ -1062,6 +1087,7 @@ def gravity_check(self):
 status_bar = StatusBar()
 
 while True:
+
     #print(player.experience)
 
     #player.health = 5  # cheat code 1
