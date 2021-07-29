@@ -110,7 +110,7 @@ class Player(pygame.sprite.Sprite):
         # Combat
         self.attacking = False
         self.attack_frame = 0
-        self.attCD = 40
+        self.attCD = 150
 
         self.experience = 0
         self.mana = 0
@@ -191,10 +191,14 @@ class Player(pygame.sprite.Sprite):
         pressed_keys = pygame.key.get_pressed()
 
         # Accelerates the player in the direction of the key press
-        if pressed_keys[K_LEFT] or pressed_keys[K_a]:
-            self.acc.x = -ACC
-        if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
-            self.acc.x = ACC
+        if player.attacking == False:
+            if pressed_keys[K_LEFT] or pressed_keys[K_a]:
+                self.acc.x = -ACC
+
+            if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
+                self.acc.x = ACC
+
+
         # Formulas to calculate velocity while accounting for friction
         self.acc.x += self.vel.x * FRIC
         self.vel += self.acc
@@ -710,13 +714,14 @@ class Enemy(pygame.sprite.Sprite):
         rand_num = numpy.random.uniform(0, 50)
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
+        s_hits = pygame.sprite.spritecollide(self, Swings, False)
 
         # Checks for collision with Fireballs
         f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
 
 
         # Activates upon either of the two expressions being true
-        if hits and player.attacking == True or f_hits:
+        if hits and player.attacking == True or f_hits or s_hits:
             if player.mana < 100: player.mana += self.mana  # Release mana
             player.experience += 1  # Release expeiriance
             self.kill()
@@ -861,12 +866,13 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
 
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
+        s_hits = pygame.sprite.spritecollide(self, Swings, False)
 
         # Checks for collision with Fireballs
         f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
 
         # Activates upon either of the two expressions being true
-        if hits and player.attacking == True or f_hits:
+        if hits and player.attacking == True or f_hits or s_hits:
             self.kill()
             handler.dead_enemy_count += 1
 
@@ -959,6 +965,9 @@ class swing(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.direction = player.direction
+        self.swoop_ani_L = [pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False),pygame.transform.flip(pygame.image.load("images/swing2.png"), True, False)]
+        self.swoop_ani_L = [pygame.image.load("images/swing1.png"),pygame.image.load("images/swing2.png")]
+
         if self.direction == "RIGHT":
             self.image = pygame.transform.flip(pygame.image.load("images/swing.png"), True, False)
             self.image = pygame.transform.scale(self.image, (105, 105))
@@ -966,7 +975,11 @@ class swing(pygame.sprite.Sprite):
             self.image = pygame.image.load("images/swing.png")
             self.image = pygame.transform.scale(self.image, (105, 105))
         self.rect = self.image.get_rect(center=player.pos)
-        self.rect.x = player.pos.x
+
+        if self.direction == "RIGHT":
+            self.rect.x = player.pos.x + 10
+        else:
+            self.rect.x = player.pos.x - 80
         self.rect.y = player.pos.y - 70
 
     def attack(self):
@@ -984,9 +997,9 @@ class swing(pygame.sprite.Sprite):
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
-                self.rect.move_ip(3, 0)
+                self.rect.move_ip(6, 0)
             else:
-                self.rect.move_ip(-3, 0)
+                self.rect.move_ip(-6, 0)
         else:
             self.kill()
             player.attacking = False
