@@ -17,8 +17,8 @@ pygame.init()
 
 #main variables
 vec = pygame.math.Vector2
-HEIGHT = 350
-WIDTH = 700
+HEIGHT = 500
+WIDTH = 1000
 ACC = 0.9
 FRIC = -0.10
 FPS = 60
@@ -56,8 +56,8 @@ class Ground(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("images/Ground.png")
-        self.image = pygame.transform.scale(self.image, (WIDTH,50))
-        self.rect = self.image.get_rect(center=(350, 330))
+        self.image = pygame.transform.scale(self.image, (WIDTH,int(HEIGHT*0.2)))
+        self.rect = self.image.get_rect(center=(int(WIDTH/2), int(HEIGHT*0.9)))
 
 
 
@@ -69,7 +69,7 @@ class HealthBar(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("images/heart5.png")
-        self.image = pygame.transform.scale(self.image, (300, 130))
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.3), int(0.5*(WIDTH*0.3))))
 
     def render(self):
         displaysurface.blit(self.image, (10, 10))
@@ -86,12 +86,16 @@ class Player(pygame.sprite.Sprite):
         self.start = False
         self.startdone = False
 
+        # Scale
+        self.xRatio = int(0.18 * WIDTH)
+        self.yRatio = int(0.3 * HEIGHT)
+
         self.image = pygame.image.load("images/player.png")
         #self.imageorg = self.image
         #cropped = pygame.Surface((80, 80))
         #cropped.blit(self.image, (-80, -80))
         #self.subsurface = pygame.Surface.subsurface(20, 2, 80, 98)
-        self.image = pygame.transform.scale(self.image, (80, 80))
+        self.image = pygame.transform.scale(self.image, (self.xRatio, self.yRatio)) ##########################################################################################################################################################
         self.rect = self.image.get_rect()
 
         # Position and direction
@@ -110,7 +114,7 @@ class Player(pygame.sprite.Sprite):
         # Combat
         self.attacking = False
         self.attack_frame = 0
-        self.attCD = 150
+        self.attCD = 100
 
         self.experience = 0
         self.mana = 0
@@ -122,6 +126,8 @@ class Player(pygame.sprite.Sprite):
         # Health
         self.health = 5
         self.cooldown = False
+
+
 
         # ## Attacking Animations
         # self.att_ani_L = [pygame.image.load("player.png"), pygame.image.load("player.png"),
@@ -138,10 +144,10 @@ class Player(pygame.sprite.Sprite):
         #              pygame.transform.flip(pygame.image.load("player.png"), True, False)]
 
         # Run animation for the RIGHT
-        self.run_ani_R = [pygame.transform.flip(pygame.image.load("images/player.png"),True,False), pygame.transform.flip(pygame.image.load("images/player.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("images/player.png"),True,False), pygame.transform.flip(pygame.image.load("images/player.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("images/playerWalk1.png"),True,False),pygame.transform.flip(pygame.image.load("images/playerWalk1.png"),True,False),
-                     pygame.transform.flip(pygame.image.load("images/playerWalk1.png"),True,False), pygame.transform.flip(pygame.image.load("images/playerWalk1.png"),True,False)]
+        self.run_ani_R = [pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/player.png"), (self.xRatio,self.yRatio)),True,False), pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/player.png"), (self.xRatio,self.yRatio)),True,False),
+                     pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/player.png"), (self.xRatio,self.yRatio)),True,False), pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/player.png"), (self.xRatio,self.yRatio)),True,False),
+                     pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/playerWalk1.png"), (self.xRatio,self.yRatio)),True,False),pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/playerWalk1.png"), (self.xRatio,self.yRatio)),True,False),
+                     pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/playerWalk1.png"), (self.xRatio,self.yRatio)),True,False),pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/playerWalk1.png"), (self.xRatio,self.yRatio)),True,False)]
 
         self.run_ani_L = [pygame.image.load("images/player.png"), pygame.image.load("images/player.png"),
                      pygame.image.load("images/player.png"), pygame.image.load("images/player.png"),
@@ -192,12 +198,12 @@ class Player(pygame.sprite.Sprite):
 
         # Accelerates the player in the direction of the key press
         if player.attacking == False:
-            pass
-        if pressed_keys[K_LEFT] or pressed_keys[K_a]:
+
+            if pressed_keys[K_LEFT] or pressed_keys[K_a]:
                 self.acc.x = -ACC
 
 
-        if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
+            if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
                 self.acc.x = ACC
 
 
@@ -352,18 +358,23 @@ class PButton(pygame.sprite.Sprite):
     def render(self, num):
         if (num == 2):
             self.image = pygame.image.load("images/home.png")
-            self.vec = vec(560, 300)
+            self.image = pygame.transform.scale(self.image,(int(WIDTH*0.05),int(HEIGHT*0.1)))
+            self.vec = vec(int(WIDTH*0.9), int(HEIGHT*0.9))
         elif (num == 1):
             if cursor.wait == 0:
                 self.image = pygame.image.load("images/pause.png")
             else:
                 self.image = pygame.image.load("images/play.png")
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.05), int(HEIGHT * 0.1)))
+            self.vec = vec(int(WIDTH * 0.95), int(HEIGHT * 0.9))
         elif (num == 3):
             self.image = pygame.image.load("images/save.png")
-            self.vec = vec(500, 300)
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.05), int(HEIGHT * 0.1)))
+            self.vec = vec(int(WIDTH*0.85), int(HEIGHT*0.9))
         elif (num == 4):
             self.image = pygame.image.load("images/load.png")
-            self.vec = vec(440, 300)
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.05), int(HEIGHT * 0.1)))
+            self.vec = vec(int(WIDTH*0.8), int(HEIGHT*0.9))
 
         displaysurface.blit(self.image, self.vec)
 
@@ -401,7 +412,7 @@ class Map(pygame.sprite.Sprite):
 
     def update(self):
         if self.hide == False and handler.world == 0:
-            displaysurface.blit(self.image, (400, 100))
+            displaysurface.blit(self.image, (WIDTH * 0.3, HEIGHT * 0.4))
 
 
 class MenuDisplay:
@@ -481,7 +492,7 @@ class StatusBar(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.surf = pygame.Surface((90, 78))
-        self.rect = self.surf.get_rect(center=(500, 10))
+        self.rect = self.surf.get_rect(center=(WIDTH*0.2, HEIGHT*0.2)) #########################################################################################################################################################################################
 
     def update_draw(self):
         # Create the text to be displayed
@@ -492,11 +503,11 @@ class StatusBar(pygame.sprite.Sprite):
         text5 = smallerfont.render("FPS: " + str(int(FPS_CLOCK.get_fps())), True, color_white)
 
         # Draw the text to the status bar
-        displaysurface.blit(text1, (585, 7))
-        displaysurface.blit(text2, (585, 22))
-        displaysurface.blit(text3, (585, 37))
-        displaysurface.blit(text4, (585, 52))
-        displaysurface.blit(text5, (585, 67))
+        displaysurface.blit(text1, (WIDTH*0.93,HEIGHT*0.03))
+        displaysurface.blit(text2, (WIDTH*0.93,HEIGHT*0.06))
+        displaysurface.blit(text3, (WIDTH*0.93,HEIGHT*0.09))
+        displaysurface.blit(text4, (WIDTH*0.93,HEIGHT*0.12))
+        displaysurface.blit(text5, (WIDTH*0.93,HEIGHT*0.15))
 
 class EventHandler():
     def __init__(self):
@@ -557,7 +568,9 @@ class EventHandler():
         background.bgimage = pygame.image.load("images/Background.png")
         background.bgimage = pygame.transform.scale(background.bgimage, (WIDTH, HEIGHT))
         ground.image = pygame.image.load("images/Ground.png")
-        ground.image = pygame.transform.scale(ground.image, (WIDTH,50))
+
+        ground.image = pygame.transform.scale(ground.image, (WIDTH, int(HEIGHT * 0.2)))
+        ground.rect = ground.image.get_rect(center=(int(WIDTH / 2), int(HEIGHT * 0.9)))
 
     def saveG(self):
         f = open("guru99.txt", "w")
@@ -619,6 +632,9 @@ class EventHandler():
         self.root.destroy()
         self.world = 1
         pygame.time.set_timer(self.enemy_generation, 2000)
+        # ground.image = pygame.image.load("images/Ground.png")
+        ground.image = pygame.transform.scale(ground.image, (WIDTH, int(HEIGHT * 0.2)))
+        ground.rect = ground.image.get_rect(center=(int(WIDTH / 2), int(HEIGHT * 0.9)))
 
         Map.hide = True
         self.battle = True
@@ -627,7 +643,9 @@ class EventHandler():
     def world2(self):
         self.root.destroy()
         background.bgimage = pygame.image.load("images/wasteland.png")
-        ground.image = pygame.image.load("images/Ground.png")
+        #ground.image = pygame.image.load("images/Ground.png")
+        ground.image = pygame.transform.scale(ground.image, (WIDTH, int(HEIGHT * 0.2)))
+        ground.rect = ground.image.get_rect(center=(int(WIDTH / 2), int(HEIGHT * 0.9)))
 
         pygame.time.set_timer(self.enemy_generation2, 2500)
 
@@ -655,14 +673,14 @@ class EventHandler():
 
 
 
-class Enemy(pygame.sprite.Sprite):
+class Enemy(pygame.sprite.Sprite): #enemy 1
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("images/Enemy.png")
 
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
-        self.image = pygame.transform.scale(self.image, (80, 100))
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.1), int(HEIGHT*0.3)))
         self.rect = self.image.get_rect()
 
         # Combat
@@ -681,11 +699,11 @@ class Enemy(pygame.sprite.Sprite):
 
         # Sets the intial position of the enemy
         if self.direction == 0:
-            self.pos.x = 0
-            self.pos.y = 350-120 # 100 is height of enemy image
+            self.pos.x = int(WIDTH*0.05)
+            self.pos.y = int(HEIGHT*0.55) # 100 is height of enemy image
         if self.direction == 1:
-            self.pos.x = 700-100
-            self.pos.y = 350-120
+            self.pos.x = int(WIDTH*0.95)
+            self.pos.y = int(HEIGHT*0.55)
 
     def move(self): # enemy
         if cursor.wait == 1: return
@@ -814,16 +832,16 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
         elif self.direction == 1:
             self.image = pygame.image.load("images/enemy2_L.png")
 
-        self.image = pygame.transform.scale(self.image, (105, 105))
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.1), int(HEIGHT*0.3)))
         self.rect = self.image.get_rect()
 
-        # Sets the initial position of the enemy
+        # Sets the initial position of the enemy  #to-do: maybe allow enemy 2 to generate at different heights
         if self.direction == 0:
-            self.pos.x = 0
-            self.pos.y = 250
+            self.pos.x = self.pos.x = int(WIDTH*0.05)
+            self.pos.y = int(HEIGHT*0.55)
         if self.direction == 1:
-            self.pos.x = 700
-            self.pos.y = 250
+            self.pos.x = self.pos.x = int(WIDTH*0.95)
+            self.pos.y = int(HEIGHT*0.55)
 
     def move(self):
         if cursor.wait == 1: return
@@ -867,7 +885,7 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
 
 
 
-    def update(self):
+    def update(self): # 2nd enemy
 
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
@@ -951,7 +969,7 @@ class FireBall(pygame.sprite.Sprite):
     def fire(self): #movement of the fireball
         player.magic_cooldown = 0
         # Runs while the fireball is still within the screen w/ extra margin
-        if -10 < self.rect.x < 710:
+        if -20 < self.rect.x < WIDTH:
             if self.direction == "RIGHT":
                 self.image = pygame.image.load("images/fireball1_L.png")
                 displaysurface.blit(self.image, self.rect)
@@ -960,9 +978,9 @@ class FireBall(pygame.sprite.Sprite):
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
-                self.rect.move_ip(1, 0)
+                self.rect.move_ip(10, 0)
             else:
-                self.rect.move_ip(-1, 0)
+                self.rect.move_ip(-10, 0)
         else:
             self.kill()
             player.magic_cooldown = 1
@@ -989,7 +1007,7 @@ class swing(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=player.pos)
 
         if self.direction == "RIGHT":
-            self.rect.x = player.pos.x + 20
+            self.rect.x = player.pos.x + 5
         else:
             self.rect.x = player.pos.x - 80
         self.rect.y = player.pos.y - 70
@@ -1018,9 +1036,9 @@ class swing(pygame.sprite.Sprite):
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
-                self.rect.move_ip(1.5, 0)
+                self.rect.move_ip(2.5, 0)
             else:
-                self.rect.move_ip(-1.5, 0)
+                self.rect.move_ip(-2.5, 0)
             if player.direction != self.direction:
                 self.kill()
         else:
@@ -1091,7 +1109,7 @@ while True:
     #print(player.experience)
 
     #player.health = 5  # cheat code 1
-    #player.mana = 12  # cheat code 2
+    player.mana = 12  # cheat code 2
     #nEventHandler.phase = 100  # cheat code 3
 
     a = datetime.datetime.now()
@@ -1107,17 +1125,17 @@ while True:
 
             # For events that occur upon clicking the mouse (left click)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if 620 <= mouse[0] <= 670 and 300 <= mouse[1] <= 345:
+            if int(WIDTH-int(WIDTH*0.05)) <= mouse[0] <= int(WIDTH) and int(HEIGHT-int(HEIGHT*0.1)) <= mouse[1] <= HEIGHT:
                 cursor.pause()
-            if 560 <= mouse[0] <= 610 and 300 <= mouse[1] <= 345:
+            if int(WIDTH-int(WIDTH*0.1)) <= mouse[0] <= int(WIDTH) and int(HEIGHT-int(HEIGHT*0.1)) <= mouse[1] <= HEIGHT:
                 handler.home()
-            if 500 <= mouse[0] <= 550 and 300 <= mouse[1] <= 345:
+            if int(WIDTH-int(WIDTH*0.15)) <= mouse[0] <= int(WIDTH) and int(HEIGHT-int(HEIGHT*0.1)) <= mouse[1] <= HEIGHT:
                 handler.saveG()
-            if 440 <= mouse[0] <= 490 and 300 <= mouse[1] <= 345:
+            if int(WIDTH-int(WIDTH*0.2)) <= mouse[0] <= int(WIDTH) and int(HEIGHT-int(HEIGHT*0.1)) <= mouse[1] <= HEIGHT:
                 handler.loadG()
 
 
-            elif 0 <= mouse[0] <= 700 and 0 <= mouse[1] <= 300 and event.button == 1: # attacking
+            elif 0 <= mouse[0] <= WIDTH and 0 <= mouse[1] <= HEIGHT and event.button == 1: # attacking
                 #player.attack()
                 #player.attacking = True
                 #print("attack")
@@ -1126,7 +1144,7 @@ while True:
                     player.attacking = True
                     SW = swing()
                     Swings.add(SW)
-            elif 0 <= mouse[0] <= 700 and 0 <= mouse[1] <= 300 and player.magic_cooldown == 1 and event.button == 3:
+            elif 0 <= mouse[0] <= WIDTH and 0 <= mouse[1] <= HEIGHT and player.magic_cooldown == 1 and event.button == 3:
                 print("fired")
                 if player.mana >= 6:
                     player.mana -= 6
@@ -1249,7 +1267,7 @@ while True:
 
     if player.startdone == False:
         if player.start == True :
-            player.image = pygame.transform.scale(player.image, (80, 80))
+            player.image = pygame.transform.scale(player.image, (player.xRatio, player.yRatio)) ############################################################################################
             player.start = False
             menu_display.display = False
             player.startdone = True
