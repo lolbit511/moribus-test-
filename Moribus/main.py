@@ -17,8 +17,8 @@ pygame.init()
 
 #main variables
 vec = pygame.math.Vector2
-HEIGHT = 500
-WIDTH = 1000
+HEIGHT = 1000
+WIDTH = HEIGHT*2
 ACC = 0.9
 FRIC = -0.10
 FPS = 60
@@ -26,9 +26,9 @@ FPS_CLOCK = pygame.time.Clock()
 COUNT = 0
 hit_cooldown = pygame.USEREVENT + 1
 # defining font styles
-headingfont = pygame.font.SysFont("Verdana", 40)
-regularfont = pygame.font.SysFont('Corbel',25)
-smallerfont = pygame.font.SysFont('Corbel',16)
+headingfont = pygame.font.SysFont("Verdana", int(HEIGHT*0.3))
+regularfont = pygame.font.SysFont('Corbel', int(HEIGHT*0.2)) # Currently unused
+smallerfont = pygame.font.SysFont('Corbel', int(HEIGHT*0.03))
 # light shade of the button
 color_light = (170,170,170)
 color_dark = (100,100,100)
@@ -43,8 +43,9 @@ pygame.display.set_caption("Moribus")
 class Background(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.bgimage = pygame.image.load("images/background.png")
-        self.bgimage = pygame.transform.scale(self.bgimage, (WIDTH, HEIGHT))
+        self.bgimage = pygame.image.load("images/background.png").convert()
+        self.bgimage = pygame.transform.scale(self.bgimage, (int(WIDTH), int(HEIGHT)))
+        #self.bgimage = pygame.transform.smoothscale(self.bgimage, (WIDTH, HEIGHT))
         self.bgY = 0
         self.bgX = 0
 
@@ -69,7 +70,7 @@ class HealthBar(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("images/heart5.png")
-        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.3), int(0.5*(WIDTH*0.3))))
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.5), int(0.5*(WIDTH*0.5))))
 
     def render(self):
         displaysurface.blit(self.image, (10, 10))
@@ -87,8 +88,8 @@ class Player(pygame.sprite.Sprite):
         self.startdone = False
 
         # Scale
-        self.xRatio = int(0.18 * WIDTH)
-        self.yRatio = int(0.3 * HEIGHT)
+        self.xRatio = int(0.10 * WIDTH)
+        self.yRatio = int(0.19 * HEIGHT)
 
         self.image = pygame.image.load("images/player.png")
         #self.imageorg = self.image
@@ -144,10 +145,14 @@ class Player(pygame.sprite.Sprite):
         #              pygame.transform.flip(pygame.image.load("player.png"), True, False)]
 
         # Run animation for the RIGHT
-        self.run_ani_R = [pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/player.png"), (self.xRatio,self.yRatio)),True,False), pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/player.png"), (self.xRatio,self.yRatio)),True,False),
-                     pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/player.png"), (self.xRatio,self.yRatio)),True,False), pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/player.png"), (self.xRatio,self.yRatio)),True,False),
-                     pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/playerWalk1.png"), (self.xRatio,self.yRatio)),True,False),pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/playerWalk1.png"), (self.xRatio,self.yRatio)),True,False),
-                     pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/playerWalk1.png"), (self.xRatio,self.yRatio)),True,False),pygame.transform.flip(pygame.transform.scale(pygame.image.load("images/playerWalk1.png"), (self.xRatio,self.yRatio)),True,False)]
+        self.run_ani_R = [pygame.transform.flip(pygame.image.load("images/player.png"), True, False),
+                          pygame.transform.flip(pygame.image.load("images/player.png"), True, False),
+                          pygame.transform.flip(pygame.image.load("images/player.png"), True, False),
+                          pygame.transform.flip(pygame.image.load("images/player.png"), True, False),
+                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png"), True, False),
+                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png"), True, False),
+                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png"), True, False),
+                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png"), True, False)]
 
         self.run_ani_L = [pygame.image.load("images/player.png"), pygame.image.load("images/player.png"),
                      pygame.image.load("images/player.png"), pygame.image.load("images/player.png"),
@@ -357,22 +362,22 @@ class PButton(pygame.sprite.Sprite):
 
     def render(self, num):
         if (num == 2):
-            self.image = pygame.image.load("images/home.png")
+            self.image = pygame.image.load("images/home.png").convert()
             self.image = pygame.transform.scale(self.image,(int(WIDTH*0.05),int(HEIGHT*0.1)))
             self.vec = vec(int(WIDTH*0.9), int(HEIGHT*0.9))
         elif (num == 1):
             if cursor.wait == 0:
-                self.image = pygame.image.load("images/pause.png")
+                self.image = pygame.image.load("images/pause.png").convert()
             else:
-                self.image = pygame.image.load("images/play.png")
+                self.image = pygame.image.load("images/play.png").convert()
             self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.05), int(HEIGHT * 0.1)))
             self.vec = vec(int(WIDTH * 0.95), int(HEIGHT * 0.9))
         elif (num == 3):
-            self.image = pygame.image.load("images/save.png")
+            self.image = pygame.image.load("images/save.png").convert()
             self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.05), int(HEIGHT * 0.1)))
             self.vec = vec(int(WIDTH*0.85), int(HEIGHT*0.9))
         elif (num == 4):
-            self.image = pygame.image.load("images/load.png")
+            self.image = pygame.image.load("images/load.png").convert()
             self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.05), int(HEIGHT * 0.1)))
             self.vec = vec(int(WIDTH*0.8), int(HEIGHT*0.9))
 
@@ -409,18 +414,19 @@ class Map(pygame.sprite.Sprite):
         super().__init__()
         self.hide = False
         self.image = pygame.image.load("images/Map.png")
+        self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.2), int(HEIGHT * 0.3)))
 
     def update(self):
         if self.hide == False and handler.world == 0:
-            displaysurface.blit(self.image, (WIDTH * 0.3, HEIGHT * 0.4))
+            displaysurface.blit(self.image, (int(WIDTH * 0.4), int(HEIGHT * 0.53)))
 
 
 class MenuDisplay:
     def __init__(self):
         super().__init__()
-        self.headingFont = pygame.font.SysFont('Verdana', 30)
+        self.headingFont = pygame.font.SysFont('Verdana', int(HEIGHT*0.05))
         self.text = self.headingFont.render("PRESS SPACE TO START", True, (255, 255, 255))
-        self.rect = self.text.get_rect()
+        self.rect = self.text.get_rect(center=(WIDTH*0.5, HEIGHT*0.5))
         self.posx = 175
         self.posy = 100
         self.display = True
@@ -430,7 +436,7 @@ class MenuDisplay:
         #self.text = self.headingFont.render(self.text, True, (157, 3, 252))
         if self.posx < 700:
             self.posx += 0
-            displaysurface.blit(self.text, (self.posx, self.posy))
+            displaysurface.blit(self.text, self.rect)
         else:
             self.display = False
             self.kill()
@@ -440,9 +446,9 @@ class MenuDisplay:
 class GameOver(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.headingFont = pygame.font.SysFont('Verdana', 60)
+        self.headingFont = pygame.font.SysFont('Verdana', int(HEIGHT*0.1))
         self.text = self.headingFont.render(("Game Over"), True, (157, 3, 252))
-        self.rect = self.text.get_rect()
+        self.rect = self.text.get_rect(center=(WIDTH*0.5, HEIGHT*0.5))
         self.posx = 175
         self.posy = 100
         self.display = False
@@ -451,16 +457,16 @@ class GameOver(pygame.sprite.Sprite):
 
     def GO_display(self):
         if player.health == 0:
-            displaysurface.blit(self.text, (self.posx, self.posy))
+            displaysurface.blit(self.text, self.rect)
             self.GameEnded = True
 
 
 class StageDisplay(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.headingFont = pygame.font.SysFont('Verdana', 60)
+        self.headingFont = pygame.font.SysFont('Verdana', int(HEIGHT*0.1))
         self.text = self.headingFont.render("STAGE: " + str(handler.stage), True, (157, 3, 252))
-        self.rect = self.text.get_rect()
+        self.rect = self.text.get_rect(center=(WIDTH*0.5, HEIGHT*0.5))
         self.posx = -100
         self.posy = 100
         self.display = False
@@ -471,7 +477,7 @@ class StageDisplay(pygame.sprite.Sprite):
         button.imgdisp = 0
         if self.posx < 720:
             self.posx += 10
-            displaysurface.blit(self.text, (self.posx, self.posy))
+            displaysurface.blit(self.text, self.rect)
         else:
             self.display = False
             self.posx = -100
@@ -491,8 +497,10 @@ class StageDisplay(pygame.sprite.Sprite):
 class StatusBar(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.surf = pygame.Surface((90, 78))
-        self.rect = self.surf.get_rect(center=(WIDTH*0.2, HEIGHT*0.2)) #########################################################################################################################################################################################
+        self.statusWidth = WIDTH * 0.09
+        self.surf = pygame.Surface((self.statusWidth, HEIGHT*0.21))
+
+        self.rect = self.surf.get_rect(center=(WIDTH*0.9, HEIGHT*0.9)) #########################################################################################################################################################################################
 
     def update_draw(self):
         # Create the text to be displayed
@@ -680,7 +688,7 @@ class Enemy(pygame.sprite.Sprite): #enemy 1
 
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
-        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.1), int(HEIGHT*0.3)))
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.08), int(HEIGHT*0.20)))
         self.rect = self.image.get_rect()
 
         # Combat
@@ -700,10 +708,10 @@ class Enemy(pygame.sprite.Sprite): #enemy 1
         # Sets the intial position of the enemy
         if self.direction == 0:
             self.pos.x = int(WIDTH*0.05)
-            self.pos.y = int(HEIGHT*0.55) # 100 is height of enemy image
+            self.pos.y = int(HEIGHT*0.64) # 100 is height of enemy image
         if self.direction == 1:
             self.pos.x = int(WIDTH*0.95)
-            self.pos.y = int(HEIGHT*0.55)
+            self.pos.y = int(HEIGHT*0.64)
 
     def move(self): # enemy
         if cursor.wait == 1: return
@@ -789,7 +797,7 @@ class Bolt(pygame.sprite.Sprite):
 
     def fire(self):
         # Runs while the fireball is still within the screen w/ extra margind
-        if -10 < self.rect.x < 710:
+        if -50 < self.rect.x < WIDTH+50:
             if self.direction == 0:
                 self.image = pygame.image.load("images/sabreclaw.png")
                 displaysurface.blit(self.image, self.rect)
@@ -798,9 +806,9 @@ class Bolt(pygame.sprite.Sprite):
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == 0:
-                self.rect.move_ip(12, 0)
+                self.rect.move_ip(10, 0)
             else:
-                self.rect.move_ip(-12, 0)
+                self.rect.move_ip(-10, 0)
         else:
             self.kill()
 
@@ -832,16 +840,16 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
         elif self.direction == 1:
             self.image = pygame.image.load("images/enemy2_L.png")
 
-        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.1), int(HEIGHT*0.3)))
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.08), int(HEIGHT*0.20)))
         self.rect = self.image.get_rect()
 
         # Sets the initial position of the enemy  #to-do: maybe allow enemy 2 to generate at different heights
         if self.direction == 0:
             self.pos.x = self.pos.x = int(WIDTH*0.05)
-            self.pos.y = int(HEIGHT*0.55)
+            self.pos.y = int(HEIGHT*0.64)
         if self.direction == 1:
             self.pos.x = self.pos.x = int(WIDTH*0.95)
-            self.pos.y = int(HEIGHT*0.55)
+            self.pos.y = int(HEIGHT*0.64)
 
     def move(self):
         if cursor.wait == 1: return
@@ -957,24 +965,24 @@ class FireBall(pygame.sprite.Sprite):
 
 
         if self.direction == "RIGHT":
-            self.image = pygame.image.load("images/fireball1_L.png")
+            self.image = pygame.image.load("images/Shadow_Orb.png")
             self.image = pygame.transform.scale(self.image, (15, 15))
         else:
-            self.image = pygame.image.load("images/fireball1_R.png")
+            self.image = pygame.image.load("images/Shadow_Orb.png")
             self.image = pygame.transform.scale(self.image, (15, 15))
         self.rect = self.image.get_rect(center=player.pos)
         self.rect.x = player.pos.x
-        self.rect.y = player.pos.y - 40
+        self.rect.y = player.pos.y - 60
 
     def fire(self): #movement of the fireball
         player.magic_cooldown = 0
         # Runs while the fireball is still within the screen w/ extra margin
         if -20 < self.rect.x < WIDTH:
             if self.direction == "RIGHT":
-                self.image = pygame.image.load("images/fireball1_L.png")
+                self.image = pygame.image.load("images/Shadow_Orb.png")
                 displaysurface.blit(self.image, self.rect)
             else:
-                self.image = pygame.image.load("images/fireball1_R.png")
+                self.image = pygame.image.load("images/Shadow_Orb.png")
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
@@ -1098,11 +1106,12 @@ def gravity_check(self):
         if hits:
             lowest = hits[0]
             if self.pos.y < lowest.rect.bottom:
-                self.pos.y = lowest.rect.top + 3
+                self.pos.y = lowest.rect.top + int(HEIGHT * 0.045)
                 self.vel.y = 0
                 self.jumping = False
 
 status_bar = StatusBar()
+
 
 while True:
 
@@ -1213,7 +1222,7 @@ while True:
 
 
     # Rendering Sprites
-    background.render()
+    background.render() ######################################
     ground.render()
     Map.update()
     Pause.render(1)
@@ -1224,7 +1233,7 @@ while True:
 
     if player.health > 0:
         #displaysurface.blit(player.image, player.rect)
-        player.image = pygame.transform.scale(player.image, (100, 100))
+        player.image = pygame.transform.scale(player.image, (player.xRatio, player.yRatio))
         displaysurface.blit(player.image, player.rect)
 
     health.render()
@@ -1296,14 +1305,14 @@ while True:
 
     GO.GO_display()
 
-    displaysurface.blit(status_bar.surf, (580, 5))
+    displaysurface.blit(status_bar.surf, (WIDTH-status_bar.statusWidth, 0))
     status_bar.update_draw()
     handler.update()
 
 
 
 
-    health.image = pygame.transform.scale(health.image, (280, 90)) #####################################################################################################################################################################
+    health.image = pygame.transform.scale(health.image, (int(WIDTH*0.35), int(HEIGHT*0.2))) #####################################################################################################################################################################
     background.bgimage = pygame.transform.scale(background.bgimage, (WIDTH, HEIGHT))
 
 
