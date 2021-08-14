@@ -8,7 +8,7 @@ from tkinter import *
 import datetime
 
 
-import time #######################################################################################new
+import time
 
 
 # freq, size, channel, buffsize
@@ -17,9 +17,9 @@ pygame.init()
 
 #main variables
 vec = pygame.math.Vector2
-HEIGHT = 1000
+HEIGHT = 1200
 WIDTH = HEIGHT*2
-ACC = 0.9
+ACC = WIDTH*0.0008 #######################################################################################new#######################################################################################new
 FRIC = -0.10
 FPS = 60
 FPS_CLOCK = pygame.time.Clock()
@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
         #cropped = pygame.Surface((80, 80))
         #cropped.blit(self.image, (-80, -80))
         #self.subsurface = pygame.Surface.subsurface(20, 2, 80, 98)
-        self.image = pygame.transform.scale(self.image, (self.xRatio, self.yRatio)) ##########################################################################################################################################################
+        self.image = pygame.transform.scale(self.image, (self.xRatio, self.yRatio))
         self.rect = self.image.get_rect()
 
         # Position and direction
@@ -110,7 +110,7 @@ class Player(pygame.sprite.Sprite):
         self.jumping = False
         self.running = False
         self.move_frame = 0
-        self.jumpheight = -13
+        self.jumpheight = (HEIGHT*0.035) * -1 ##########################################################################################################################################################
         self.jump_timer = 250
         # Combat
         self.attacking = False
@@ -191,7 +191,7 @@ class Player(pygame.sprite.Sprite):
 
     def move(self): #player
         if cursor.wait == 1: return
-        self.acc = vec(0, 0.5)
+        self.acc = vec(0, int(HEIGHT*0.003)) # player gravity
         # Will set running to False if the player has slowed down to a certain extent
         if abs(self.vel.x) > 0.3:
             self.running = True
@@ -350,7 +350,7 @@ class Item(pygame.sprite.Sprite):
                 self.kill()
             if self.type == 3:
                 print("jump boosted")
-                player.jumpheight = -18
+                player.jumpheight = int(HEIGHT*0.05) * -1
                 self.kill()
 
 
@@ -573,7 +573,7 @@ class EventHandler():
 
         # Bring back normal backgrounds
         Map.hide = False
-        background.bgimage = pygame.image.load("images/Background.png")
+        background.bgimage = pygame.image.load("images/Background.png").convert()
         background.bgimage = pygame.transform.scale(background.bgimage, (WIDTH, HEIGHT))
         ground.image = pygame.image.load("images/Ground.png")
 
@@ -650,7 +650,7 @@ class EventHandler():
 
     def world2(self):
         self.root.destroy()
-        background.bgimage = pygame.image.load("images/wasteland.png")
+        background.bgimage = pygame.image.load("images/wasteland.png").convert()
         #ground.image = pygame.image.load("images/Ground.png")
         ground.image = pygame.transform.scale(ground.image, (WIDTH, int(HEIGHT * 0.2)))
         ground.rect = ground.image.get_rect(center=(int(WIDTH / 2), int(HEIGHT * 0.9)))
@@ -693,7 +693,7 @@ class Enemy(pygame.sprite.Sprite): #enemy 1
 
         # Combat
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
-        self.vel.x = random.randint(2, 6) / 2  # Randomised velocity of the generated enemy
+        self.vel.x = random.randint(2, 6) / 2  # Randomised velocity of the generated enemy ######################################################################################
         self.mana = random.randint(1, 3)  # Randomised mana amount obtained upon kill
 
         #self.attacking = False
@@ -790,6 +790,7 @@ class Bolt(pygame.sprite.Sprite):
     def __init__(self, x, y, d):
         super().__init__()
         self.image = pygame.image.load("images/sabreclaw.png")
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.03),int(HEIGHT*0.03)))
         self.rect = self.image.get_rect()
         self.rect.x = x + 15
         self.rect.y = y + 20
@@ -800,15 +801,17 @@ class Bolt(pygame.sprite.Sprite):
         if -50 < self.rect.x < WIDTH+50:
             if self.direction == 0:
                 self.image = pygame.image.load("images/sabreclaw.png")
+                self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.03), int(HEIGHT * 0.06)))
                 displaysurface.blit(self.image, self.rect)
             else:
                 self.image = pygame.transform.flip(pygame.image.load("images/sabreclaw.png"), True, False)
+                self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.03), int(HEIGHT * 0.06)))
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == 0:
-                self.rect.move_ip(10, 0)
+                self.rect.move_ip(int(WIDTH*0.01), 0)
             else:
-                self.rect.move_ip(-10, 0)
+                self.rect.move_ip(int(WIDTH*0.01)*-1, 0)
         else:
             self.kill()
 
@@ -966,13 +969,13 @@ class FireBall(pygame.sprite.Sprite):
 
         if self.direction == "RIGHT":
             self.image = pygame.image.load("images/Shadow_Orb.png")
-            self.image = pygame.transform.scale(self.image, (15, 15))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH*0.03),int(HEIGHT*0.03)))
         else:
             self.image = pygame.image.load("images/Shadow_Orb.png")
-            self.image = pygame.transform.scale(self.image, (15, 15))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH*0.03),int(HEIGHT*0.03)))
         self.rect = self.image.get_rect(center=player.pos)
         self.rect.x = player.pos.x
-        self.rect.y = player.pos.y - 60
+        self.rect.y = player.pos.y - int(HEIGHT*0.09)
 
     def fire(self): #movement of the fireball
         player.magic_cooldown = 0
@@ -980,15 +983,17 @@ class FireBall(pygame.sprite.Sprite):
         if -20 < self.rect.x < WIDTH:
             if self.direction == "RIGHT":
                 self.image = pygame.image.load("images/Shadow_Orb.png")
+                self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.03), int(HEIGHT * 0.03)))
                 displaysurface.blit(self.image, self.rect)
             else:
                 self.image = pygame.image.load("images/Shadow_Orb.png")
+                self.image = pygame.transform.scale(self.image, (int(WIDTH*0.03),int(HEIGHT*0.03)))
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
-                self.rect.move_ip(10, 0)
+                self.rect.move_ip(int(WIDTH*0.025), 0)
             else:
-                self.rect.move_ip(-10, 0)
+                self.rect.move_ip(int(WIDTH*0.025)*-1, 0)
         else:
             self.kill()
             player.magic_cooldown = 1
@@ -999,31 +1004,31 @@ class swing(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.direction = player.direction
-        self.swoop_ani_R = [pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False), (105, 105)),
-                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing2.png"), True, False), (105, 105)),
-                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing3.png"), True, False), (105, 105))]
-        self.swoop_ani_L = [pygame.transform.scale(pygame.image.load("images/swing1.png"),(105, 105)),
-                            pygame.transform.scale(pygame.image.load("images/swing2.png"),(105, 105)),
-                            pygame.transform.scale(pygame.image.load("images/swing3.png"),(105, 105))]
+        self.swoop_ani_R = [pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False), (int(WIDTH * 0.08), int(HEIGHT * 0.08))),
+                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing2.png"), True, False), (int(WIDTH * 0.08), int(HEIGHT * 0.08))),
+                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing3.png"), True, False), (int(WIDTH * 0.08), int(HEIGHT * 0.08)))]
+        self.swoop_ani_L = [pygame.transform.scale(pygame.image.load("images/swing1.png"),(int(WIDTH * 0.08), int(HEIGHT * 0.08))),
+                            pygame.transform.scale(pygame.image.load("images/swing2.png"),(int(WIDTH * 0.08), int(HEIGHT * 0.08))),
+                            pygame.transform.scale(pygame.image.load("images/swing3.png"),(int(WIDTH * 0.08), int(HEIGHT * 0.08)))]
 
         if self.direction == "RIGHT":
             self.image = pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False)
-            self.image = pygame.transform.scale(self.image, (105, 105))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.08), int(HEIGHT * 0.08)))
         else:
             self.image = pygame.image.load("images/swing1.png")
-            self.image = pygame.transform.scale(self.image, (105, 105))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.08), int(HEIGHT * 0.08)))
         self.rect = self.image.get_rect(center=player.pos)
 
         if self.direction == "RIGHT":
-            self.rect.x = player.pos.x + 5
+            self.rect.x = player.pos.x + int(WIDTH*0.05)
         else:
-            self.rect.x = player.pos.x - 80
-        self.rect.y = player.pos.y - 70
+            self.rect.x = player.pos.x - int(WIDTH*0.01)
+        self.rect.y = player.pos.y - int(HEIGHT*0.08)
 
     def attack(self):
         #print(abs(player.rect.x - self.rect.x))
 
-        self.rect.y = player.pos.y - 70
+        self.rect.y = player.pos.y - int(HEIGHT*0.12)
 
         if abs(player.rect.x - self.rect.x) < 100:
             #print("passed")
@@ -1044,9 +1049,9 @@ class swing(pygame.sprite.Sprite):
                 displaysurface.blit(self.image, self.rect)
 
             if self.direction == "RIGHT":
-                self.rect.move_ip(2.5, 0)
+                self.rect.move_ip(int(WIDTH*0.003), 0)
             else:
-                self.rect.move_ip(-2.5, 0)
+                self.rect.move_ip(int(WIDTH*0.003)*-1, 0)
             if player.direction != self.direction:
                 self.kill()
         else:
@@ -1314,6 +1319,7 @@ while True:
 
     health.image = pygame.transform.scale(health.image, (int(WIDTH*0.35), int(HEIGHT*0.2))) #####################################################################################################################################################################
     background.bgimage = pygame.transform.scale(background.bgimage, (WIDTH, HEIGHT))
+
 
 
     pygame.display.update()
