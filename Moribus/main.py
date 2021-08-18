@@ -1011,18 +1011,18 @@ class swing(pygame.sprite.Sprite):
                             pygame.transform.scale(pygame.image.load("images/swing2.png"),(int(WIDTH * 0.08), int(HEIGHT * 0.08))),
                             pygame.transform.scale(pygame.image.load("images/swing3.png"),(int(WIDTH * 0.08), int(HEIGHT * 0.08)))]
 
-        if self.direction == "RIGHT":
+        if self.direction == "RIGHT": # resizing
             self.image = pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False)
-            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.08), int(HEIGHT * 0.08)))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.13), int(HEIGHT * 0.13)))
         else:
             self.image = pygame.image.load("images/swing1.png")
-            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.08), int(HEIGHT * 0.08)))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.13), int(HEIGHT * 0.13)))
         self.rect = self.image.get_rect(center=player.pos)
 
-        if self.direction == "RIGHT":
-            self.rect.x = player.pos.x + int(WIDTH*0.05)
+        if self.direction == "RIGHT": # spawning object left or right of the player
+            self.rect.x = player.pos.x - int(WIDTH*0.03)
         else:
-            self.rect.x = player.pos.x - int(WIDTH*0.01)
+            self.rect.x = player.pos.x - int(WIDTH*0.05)
         self.rect.y = player.pos.y - int(HEIGHT*0.08)
 
     def attack(self):
