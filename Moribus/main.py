@@ -71,9 +71,14 @@ class HealthBar(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("images/heart5.png")
         self.image = pygame.transform.scale(self.image, (int(WIDTH*0.5), int(0.5*(WIDTH*0.5))))
+        self.regularFont = pygame.font.SysFont('Verdana', int(HEIGHT * 0.05))
+        self.text = self.regularFont.render(str(player.health), True, (255, 255, 255)) #### ❤
+        self.rect = self.text.get_rect(center=(WIDTH * 0.38, HEIGHT * 0.075))
 
     def render(self):
+        self.text = self.regularFont.render(str(player.health), True, (255, 255, 255))
         displaysurface.blit(self.image, (10, 10))
+        displaysurface.blit(self.text, self.rect)
 
 # Moved health bar animations out so all other classes have easy access
 health_ani = [pygame.image.load("images/heart0.png"), pygame.image.load("images/heart1.png"),
@@ -110,7 +115,7 @@ class Player(pygame.sprite.Sprite):
         self.jumping = False
         self.running = False
         self.move_frame = 0
-        self.jumpheight = (HEIGHT*0.035) * -1 ##########################################################################################################################################################
+        self.jumpheight = (HEIGHT*0.035) * -1
         self.jump_timer = 250
         # Combat
         self.attacking = False
@@ -125,7 +130,7 @@ class Player(pygame.sprite.Sprite):
         # Stage
         self.stage = 1
         # Health
-        self.health = 5
+        self.health = 100 ##########################################################################################################################################################
         self.cooldown = False
 
 
@@ -173,17 +178,17 @@ class Player(pygame.sprite.Sprite):
         #print(self.att_ani_L)
 
 
-    def player_hit(self): #player
+    def player_hit(self, damage = 10): #player
         if GO.GameEnded == False:
 
             #print("entering player hit")
-            if self.cooldown == False:
+            if self.cooldown == False: #
 
                 self.cooldown = True  # Enable the cooldown
                 pygame.time.set_timer(hit_cooldown, 1000)  # Resets cooldown in 1 second
 
-                self.health = self.health - 1
-                health.image = health_ani[self.health]
+                self.health = self.health - damage
+                health.image = health_ani[int(self.health/20)]
 
                 if self.health <= 0:
                     self.kill()
@@ -320,12 +325,13 @@ class Item(pygame.sprite.Sprite):
         super().__init__()
         if itemtype == 1:
             self.image = pygame.image.load("images/heart.png")
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.05), int(HEIGHT * 0.07)))
         elif itemtype == 2:
             self.image = pygame.image.load("images/coin.png")
-            self.image = pygame.transform.scale(self.image, (30, 30))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH*0.05), int(HEIGHT*0.07)))
         elif itemtype == 3:
             self.image = pygame.image.load("images/jump_potion.gif")
-            self.image = pygame.transform.scale(self.image, (30, 30))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH*0.05), int(HEIGHT*0.07)))
         self.rect = self.image.get_rect()
         self.type = itemtype
         self.posx = 0
@@ -333,16 +339,19 @@ class Item(pygame.sprite.Sprite):
 
     def render(self):
         self.rect.x = self.posx
-        self.rect.y = self.posy
+        self.rect.y = self.posy + int(HEIGHT*0.07)
         displaysurface.blit(self.image, self.rect)
 
     def update(self): #item
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
-        # Code to be activated if item comes in contact with player
+        # Code to be activated if item comes in contact with playerd
         if hits:
-            if player.health < 5 and self.type == 1:
-                player.health += 1
-                health.image = health_ani[player.health]
+            if player.health < 100 and self.type == 1:
+                player.health += 10
+                if player.health > 100:
+                    player.health = 100
+                #health.image = health_ani[player.health]
+                health.image = health_ani[int(player.health / 20)]
                 self.kill()
             if self.type == 2:
                 # handler.money += 1
@@ -384,11 +393,11 @@ class PButton(pygame.sprite.Sprite):
         displaysurface.blit(self.image, self.vec)
 
 
-class Cursor(pygame.sprite.Sprite):
+class Cursor(pygame.sprite.Sprite): ########################################################################################################################################################
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("images/cursor.png")
-        self.image = pygame.transform.scale(self.image, (40, 40))
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.025),int(HEIGHT*0.05)))
         self.rect = self.image.get_rect()
         self.wait = 0
 
@@ -399,7 +408,7 @@ class Cursor(pygame.sprite.Sprite):
             self.wait = 1
 
     def hover(self):
-        if 620 <= mouse[0] <= 670 and 300 <= mouse[1] <= 345:
+        if int(WIDTH*0.8) <= mouse[0] <= WIDTH and int(HEIGHT*0.9) <= mouse[1] <= HEIGHT:
             pygame.mouse.set_visible(False)
             cursor.rect.center = pygame.mouse.get_pos()  # update position
             displaysurface.blit(cursor.image, cursor.rect)
@@ -418,7 +427,7 @@ class Map(pygame.sprite.Sprite):
 
     def update(self):
         if self.hide == False and handler.world == 0:
-            displaysurface.blit(self.image, (int(WIDTH * 0.4), int(HEIGHT * 0.53)))
+            displaysurface.blit(self.image, (int(WIDTH * 0.4), int(HEIGHT * 0.53))) #0.83
 
 
 class MenuDisplay:
@@ -456,12 +465,13 @@ class GameOver(pygame.sprite.Sprite):
         self.clear = False
 
     def GO_display(self):
-        if player.health == 0:
+        if player.health < 1:
             displaysurface.blit(self.text, self.rect)
+            player.health = 0
             self.GameEnded = True
 
 
-class StageDisplay(pygame.sprite.Sprite):
+class StageDisplay(pygame.sprite.Sprite): #
     def __init__(self):
         super().__init__()
         self.headingFont = pygame.font.SysFont('Verdana', int(HEIGHT*0.1))
@@ -473,8 +483,8 @@ class StageDisplay(pygame.sprite.Sprite):
         self.clear = False
 
     def stage_clear(self):
-        self.text = headingfont.render("STAGE CLEAR!", True, color_dark)
-        button.imgdisp = 0
+        self.text = headingfont.render(" ", True, color_dark)
+        PButton.imgdisp = 0
         if self.posx < 720:
             self.posx += 10
             displaysurface.blit(self.text, self.rect)
@@ -526,7 +536,8 @@ class EventHandler():
         self.dead_enemy_count = 0
         self.battle = False
         self.enemy_generation = pygame.USEREVENT + 1
-        self.enemy_generation2 = pygame.USEREVENT + 3
+        self.enemy_generation2 = pygame.USEREVENT + 2
+        self.enemy_generation3 = pygame.USEREVENT + 3
         self.stage_enemies = []
         #self.stage_enemies.append(0)
 
@@ -545,6 +556,8 @@ class EventHandler():
             pygame.time.set_timer(self.enemy_generation, 1500 - (50 * self.stage))
         elif self.world == 2:
             pygame.time.set_timer(self.enemy_generation2, 1500 - (50 * self.stage))
+        elif self.world == 2:
+            pygame.time.set_timer(self.enemy_generation3, 1500 - (50 * self.stage))
 
     def update(self): #Event Handler
         #print("a:" , self.dead_enemy_count)
@@ -559,6 +572,7 @@ class EventHandler():
         # Reset Battle code
         pygame.time.set_timer(self.enemy_generation, 0)
         pygame.time.set_timer(self.enemy_generation2, 0)
+        pygame.time.set_timer(self.enemy_generation3, 0)
 
         self.battle = False
         self.enemy_count = 0
@@ -681,10 +695,10 @@ class EventHandler():
 
 
 
-class Enemy(pygame.sprite.Sprite): #enemy 1
+class Enemy(pygame.sprite.Sprite): #enemy 1  enemy1
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("images/Enemy.png")
+        self.image = pygame.image.load("images/Enemy.png").convert()
 
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
@@ -693,7 +707,7 @@ class Enemy(pygame.sprite.Sprite): #enemy 1
 
         # Combat
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
-        self.vel.x = random.randint(2, 6) / 2  # Randomised velocity of the generated enemy ######################################################################################
+        self.vel.x = random.randint(2, 6) / 2  # Randomised velocity of the generated enemy, enemy speed
         self.mana = random.randint(1, 3)  # Randomised mana amount obtained upon kill
 
         #self.attacking = False
@@ -704,20 +718,23 @@ class Enemy(pygame.sprite.Sprite): #enemy 1
         self.boltCD = 150
         self.fired = False
 
+        # spawn location
+
+
 
         # Sets the intial position of the enemy
-        if self.direction == 0:
-            self.pos.x = int(WIDTH*0.05)
+        if self.direction == 0: # right
+            self.pos.x = int(WIDTH*-0.01*(random.randint(8,28))) ########### left = below 0, right = above WIDTH ########### from 0 to 0.2 ##################################################################################
             self.pos.y = int(HEIGHT*0.64) # 100 is height of enemy image
-        if self.direction == 1:
-            self.pos.x = int(WIDTH*0.95)
+        if self.direction == 1: # left
+            self.pos.x = int(WIDTH*+0.01*(random.randint(8,28))+WIDTH)
             self.pos.y = int(HEIGHT*0.64)
 
     def move(self): # enemy
         if cursor.wait == 1: return
 
         # Causes the enemy to change directions upon reaching the end of screen
-        if self.pos.x >= (WIDTH - 20):
+        if self.pos.x >= (WIDTH - int(WIDTH*0.08)):
             self.direction = 1
         elif self.pos.x <= 0:
             self.direction = 0
@@ -745,6 +762,7 @@ class Enemy(pygame.sprite.Sprite): #enemy 1
         rand_num = numpy.random.uniform(0, 50)
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
+
         s_hits = pygame.sprite.spritecollide(self, Swings, False)
 
         # Checks for collision with Fireballs
@@ -818,7 +836,7 @@ class Bolt(pygame.sprite.Sprite):
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
         if hits:
-            player.player_hit()
+            player.player_hit(15)
             self.kill()
 
 
@@ -834,7 +852,7 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
         self.fired = False
 
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
-        self.vel.x = random.randint(2, 6) / 3  # Randomized velocity of the generated enemyd
+        self.vel.x = random.randint(2, 6) / 3  # Randomized velocity of the generated enemy
         self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
 
 
@@ -842,7 +860,6 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
             self.image = pygame.image.load("images/enemy2.png")
         elif self.direction == 1:
             self.image = pygame.image.load("images/enemy2_L.png")
-
         self.image = pygame.transform.scale(self.image, (int(WIDTH*0.08), int(HEIGHT*0.20)))
         self.rect = self.image.get_rect()
 
@@ -951,13 +968,168 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
             self.direction = 0
             self.image = pygame.image.load("images/enemy2.png")
 
-            self.image = pygame.transform.scale(self.image, (105, 105))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH*0.08), int(HEIGHT*0.20)))
         else:
             self.direction = 1
             self.image = pygame.image.load("images/enemy2_L.png")
 
-            self.image = pygame.transform.scale(self.image, (105, 105))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH*0.08), int(HEIGHT*0.20)))
 
+
+class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
+    def __init__(self):
+        super().__init__()
+        self.pos = vec(0, 0)
+        self.vel = vec(0, 0)
+        self.wait = 500
+        self.wait_status = False
+        self.turning = 0
+        self.boltCD = 150
+        self.fired = False
+        # health
+        self.health = 5
+        self.dmgCD = 25 #################################################################################################################################################################################
+        self.cooldown = False
+
+        self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
+        self.vel.x = 15 / 3  # Randomized velocity of the generated enemy
+        self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
+
+
+        if self.direction == 0:
+            self.image = pygame.image.load("images/bosses/boss1_R.png")
+        elif self.direction == 1:
+            self.image = pygame.image.load("images/bosses/boss1.png")
+
+        self.image = pygame.transform.scale(self.image, (int(WIDTH*0.08), int(HEIGHT*0.20)))
+        self.rect = self.image.get_rect()
+
+        # Sets the initial position of the enemy  #to-do: maybe allow enemy 2 to generate at different heights
+        if self.direction == 0:
+            self.pos.x = self.pos.x = int(WIDTH*0.05)
+            self.pos.y = int(HEIGHT*0.64)
+        if self.direction == 1:
+            self.pos.x = self.pos.x = int(WIDTH*0.95)
+            self.pos.y = int(HEIGHT*0.64)
+
+    def move(self): # boss 1
+        if cursor.wait == 1: return
+
+        # Causes the enemy to change directions upon reaching the end of screen
+        if self.pos.x >= (WIDTH - 50):
+            self.direction = 1
+        elif self.pos.x <= 0:
+            self.direction = 0
+        # Updates position with new values
+        if self.wait > 50:
+            self.wait_status = True
+        elif int(self.wait) <= 0:
+            self.wait_status = False
+
+        if self.wait_status == True:
+            rand_num = numpy.random.uniform(0, 50)
+            if int(rand_num) == 25 and self.boltCD > 0 and self.fired == False:
+                self.fired = True
+                bolt = Bolt(self.pos.x, self.pos.y, self.direction)
+                Bolts.add(bolt)
+            self.wait -= 1
+
+        if (self.direction_check()):
+            self.turn()
+            self.wait = 90
+            self.turning = 1
+
+        if self.wait_status == True: # determines how long the entity waits
+            self.wait -= 5
+
+        elif self.direction == 0:
+            self.pos.x += self.vel.x
+            self.wait += self.vel.x
+        elif self.direction == 1:
+            self.pos.x -= self.vel.x
+            self.wait += self.vel.x
+
+        self.rect.topleft = self.pos  # Updates rect
+
+
+    def update(self): # boss 1
+
+        # Checks for collision with the Player
+        hits = pygame.sprite.spritecollide(self, Playergroup, False)
+        s_hits = pygame.sprite.spritecollide(self, Swings, False)
+
+        # Checks for collision with Fireballs
+        f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
+        print(" ")
+        print("health:", self.health)
+        print("cooldown:", self.boltCD)
+
+        print(" ")
+        # Activates upon either of the two expressions being true
+        if self.cooldown == True:
+            self.dmgCD -= 1
+        if self.dmgCD < 0:
+            self.cooldown = False
+            self.dmgCD = 25
+            # TODO: no contact damage
+
+            # TODO: reset enemy projectile attack
+            self.boltCD = 150
+
+        if player.attacking == True and f_hits or s_hits and self.dmgCD == 25:
+            self.cooldown = True
+            self.health -= 1
+            if self.health < 0:
+                self.kill()
+                handler.dead_enemy_count += 1
+
+            if player.mana < 100: player.mana += self.mana  # Release mana
+            player.experience += 1  # Release expeiriance
+
+            rand_num = numpy.random.uniform(0, 100)
+            item_no = 0
+            if rand_num >= 0 and rand_num <= 5:  # 1 / 20 chance for an item (health) drop
+                item_no = 1
+            elif rand_num > 5 and rand_num <= 15:
+                item_no = 2
+
+            if item_no != 0:
+                # Add Item to Items group
+                item = Item(item_no)
+                Items.add(item)
+                # Sets the item location to the location of the killed enemy
+                item.posx = self.pos.x
+                item.posy = self.pos.y
+
+    def render(self):
+        # Displays the enemy on screen
+        displaysurface.blit(self.image, self.rect)
+
+    def direction_check(self):
+        if (player.pos.x - self.pos.x < 0 and self.direction == 0):
+            return 1
+        elif (player.pos.x - self.pos.x > 0 and self.direction == 1):
+            return 1
+        else:
+            return 0
+
+    def turn(self): # self.wait is not decreasing fast enough
+        if self.wait > 0:
+            self.wait -= 1
+
+        elif int(self.wait) <= 0:
+            self.turning = 0
+        print("turning")
+        if (self.direction):
+            self.direction = 0
+            self.image = pygame.image.load("images/bosses/boss1_R.png")
+
+            self.image = pygame.transform.scale(self.image, (int(WIDTH*0.08), int(HEIGHT*0.20)))
+        else:
+            self.direction = 1
+            self.image = pygame.image.load("images/bosses/boss1.png")
+
+            self.image = pygame.transform.scale(self.image, (int(WIDTH*0.08), int(HEIGHT*0.20)))
 
 
 class FireBall(pygame.sprite.Sprite):
@@ -975,7 +1147,7 @@ class FireBall(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(self.image, (int(WIDTH*0.03),int(HEIGHT*0.03)))
         self.rect = self.image.get_rect(center=player.pos)
         self.rect.x = player.pos.x
-        self.rect.y = player.pos.y - int(HEIGHT*0.09)
+        self.rect.y = player.pos.y - int(HEIGHT*0.15)
 
     def fire(self): #movement of the fireball
         player.magic_cooldown = 0
@@ -1004,39 +1176,39 @@ class swing(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.direction = player.direction
-        self.swoop_ani_R = [pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False), (int(WIDTH * 0.08), int(HEIGHT * 0.08))),
-                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing2.png"), True, False), (int(WIDTH * 0.08), int(HEIGHT * 0.08))),
-                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing3.png"), True, False), (int(WIDTH * 0.08), int(HEIGHT * 0.08)))]
-        self.swoop_ani_L = [pygame.transform.scale(pygame.image.load("images/swing1.png"),(int(WIDTH * 0.08), int(HEIGHT * 0.08))),
-                            pygame.transform.scale(pygame.image.load("images/swing2.png"),(int(WIDTH * 0.08), int(HEIGHT * 0.08))),
-                            pygame.transform.scale(pygame.image.load("images/swing3.png"),(int(WIDTH * 0.08), int(HEIGHT * 0.08)))]
+
+        self.swoop_ani_R = [pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing1.png").convert(), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15))),
+                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing2.png").convert(), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15))),
+                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing3.png").convert(), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15)))]
+        self.swoop_ani_L = [pygame.transform.scale(pygame.image.load("images/swing1.png").convert(),(int(WIDTH * 0.15), int(HEIGHT * 0.15))),
+                            pygame.transform.scale(pygame.image.load("images/swing2.png").convert(),(int(WIDTH * 0.15), int(HEIGHT * 0.15))),
+                            pygame.transform.scale(pygame.image.load("images/swing3.png").convert(),(int(WIDTH * 0.15), int(HEIGHT * 0.15)))]
 
         if self.direction == "RIGHT": # resizing
             self.image = pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False)
-            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.13), int(HEIGHT * 0.13)))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.15), int(HEIGHT * 0.15)))
         else:
             self.image = pygame.image.load("images/swing1.png")
-            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.13), int(HEIGHT * 0.13)))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.15), int(HEIGHT * 0.15)))
         self.rect = self.image.get_rect(center=player.pos)
 
         if self.direction == "RIGHT": # spawning object left or right of the player
             self.rect.x = player.pos.x - int(WIDTH*0.03)
         else:
-            self.rect.x = player.pos.x - int(WIDTH*0.05)
+            self.rect.x = player.pos.x - int(WIDTH*0.08)
         self.rect.y = player.pos.y - int(HEIGHT*0.08)
 
     def attack(self):
         #print(abs(player.rect.x - self.rect.x))
 
         self.rect.y = player.pos.y - int(HEIGHT*0.12)
-
-        if abs(player.rect.x - self.rect.x) < 100:
+        if pygame.sprite.spritecollide(self, Playergroup, False): # TODO: f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
             #print("passed")
             if self.direction == "RIGHT":
                 #self.image = pygame.transform.flip(pygame.image.load("images/swing.png"), True, False)
                 #self.image = pygame.transform.scale(self.image, (105, 105))
 
-                self.image = self.swoop_ani_R[(abs(player.rect.x - self.rect.x) // 30)-1]
+                self.image = self.swoop_ani_R[(abs(player.rect.x - self.rect.x) // 4)-1]
                 #print((abs(player.rect.x - self.rect.x) // 30)-1)
                 displaysurface.blit(self.image, self.rect)
             else:
@@ -1044,7 +1216,7 @@ class swing(pygame.sprite.Sprite):
                 #self.image = pygame.transform.scale(self.image, (105, 105))
                 #self.image = self.swoop_ani_L[abs(player.rect.x - self.rect.x) // 30]
 
-                self.image = self.swoop_ani_L[(abs(player.rect.x - self.rect.x) // 30) - 1]
+                self.image = self.swoop_ani_L[(abs(player.rect.x - self.rect.x) // 4) - 1]
                 #print((abs(player.rect.x - self.rect.x) // 30) - 1)
                 displaysurface.blit(self.image, self.rect)
 
@@ -1180,14 +1352,27 @@ while True:
             if handler.enemy_count < handler.stage_enemies[handler.stage - 1]:
                 enemy = Enemy2()
                 Enemies.add(enemy)
+                enemy = Boss1()
+                Enemies.add(enemy)
+                handler.enemy_count += 1
+                handler.next_level_started = False
+
+        if event.type == handler.enemy_generation3:
+            if handler.enemy_count < handler.stage_enemies[handler.stage - 1]:
+                enemy = Enemy2()
+                Enemies.add(enemy)
+                enemy = Boss1()
+                Enemies.add(enemy)
+                #enemy = Boss1()
+                # Enemies.add(enemy)
                 handler.enemy_count += 1
                 handler.next_level_started = False
 
 
                 # Event handling for a range of different key presses
         # Event handling for a range of different key presses
-        if event.type == pygame.KEYDOWN and cursor.wait == 0:
-            if 300 < player.rect.x < 600 and event.key == pygame.K_e and handler.world == 0:
+        if event.type == pygame.KEYDOWN and cursor.wait == 0: #int(WIDTH * 0.4), int(HEIGHT * 0.53)
+            if int(WIDTH * 0.4) < player.rect.x < int(WIDTH * 0.6) and event.key == pygame.K_e and handler.world == 0:
                 handler.stage_handler()
                 #print("castle range")
             if event.key == pygame.K_n:
@@ -1328,4 +1513,5 @@ while True:
 
     b = datetime.datetime.now()
     #print(GO.GameEnded)
+
     #print(player.jump_timer)
