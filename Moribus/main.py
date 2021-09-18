@@ -806,7 +806,7 @@ class Enemy(pygame.sprite.Sprite): #enemy 1  enemy1
 
 
         # Activates upon either of the two expressions being true
-        if player.attacking == True and f_hits or s_hits:
+        if f_hits or s_hits:
             if player.mana < 100: player.mana += self.mana  # Release mana
             player.experience += 1  # Release expeiriance
             self.kill()
@@ -959,7 +959,7 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
         f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
 
         # Activates upon either of the two expressions being true
-        if player.attacking == True and f_hits or s_hits:
+        if f_hits or s_hits:
             self.kill()
             handler.dead_enemy_count += 1
 
@@ -1112,7 +1112,7 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
             # TODO: reset enemy projectile attack
             self.boltCD = 150
 
-        if player.attacking == True and f_hits or s_hits and self.dmgCD == 25:
+        if f_hits or s_hits and self.dmgCD == 25:
             self.cooldown = True
             self.health -= 1
             if self.health < 0:
@@ -1369,7 +1369,7 @@ while True:
                 print("fired")
                 if player.mana >= 6:
                     player.mana -= 6
-                    player.attacking = True
+                    # player.attacking = True
                     fireball = FireBall()
                     Fireballs.add(fireball)
                     mmanager.playsound(fsound, 0.3)
