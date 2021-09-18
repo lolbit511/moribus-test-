@@ -1,15 +1,12 @@
 import numpy
-import pygame # THIS IS THE ACTUAL FILE ON GITHUB (23/6/2021)
+import pygame # THIS IS THE ACTUAL FILE ON GITHUB (18/9/2021)
 from pygame.locals import *
 import sys
 import random
 from tkinter import filedialog
 from tkinter import *
 import datetime
-
-
 import time
-
 
 # freq, size, channel, buffsize
 pygame.mixer.pre_init(44100, 16, 1, 512)
@@ -121,6 +118,7 @@ class Player(pygame.sprite.Sprite):
         self.attacking = False
         self.attack_frame = 0
         self.attCD = 100
+        self.slash = 0
 
         self.experience = 0
         self.mana = 0
@@ -234,12 +232,19 @@ class Player(pygame.sprite.Sprite):
         self.rect.midbottom = self.pos  # Update rect with new pos
 
 
-    def attack(self):
+    def attack(self): #player
         if cursor.wait == 1: return
         # If attack frame has reached end of sequence, return to base frame
         if self.attack_frame > self.attCD-1:
             self.attack_frame = 0
             self.attacking = False
+
+        print(self.attack_frame)
+        if (self.attack_frame+1)%9 == 0:
+            mmanager.playsound(swordtrack[self.slash], 0.05)
+            self.slash += 1
+            if self.slash >= 2:
+                self.slash = 0
 
         # Check direction for correct animation to display
         if self.direction == "RIGHT":
@@ -351,7 +356,7 @@ class Item(pygame.sprite.Sprite):
                 if player.health > 100:
                     player.health = 100
                 #health.image = health_ani[player.health]
-                health.image = health_ani[int(player.health / 20)]
+                health_ani.image = health_ani[int(player.health / 20)]
                 self.kill()
             if self.type == 2:
                 # handler.money += 1
@@ -527,6 +532,34 @@ class StatusBar(pygame.sprite.Sprite):
         displaysurface.blit(text4, (WIDTH*0.93,HEIGHT*0.12))
         displaysurface.blit(text5, (WIDTH*0.93,HEIGHT*0.15))
 
+
+class MusicManager:
+    def __init__(self):
+        super().__init__()
+        self.volume = 0.05  # Default Volume
+
+    def playsoundtrack(self, music, num, vol):
+        pygame.mixer.music.set_volume(vol)
+        pygame.mixer.music.load(music)
+        pygame.mixer.music.play(num)
+
+    def playsound(self, sound, vol):
+        sound.set_volume(vol)
+        sound.play()
+
+    def stop(self):
+        pygame.mixer.music.stop()
+
+
+# Music and Sound
+soundtrack = ["Sounds/background_village.wav", "Sounds/battle_music.wav", "Sounds/gameover.wav"]
+swordtrack = [pygame.mixer.Sound("Sounds/sword1.wav"), pygame.mixer.Sound("Sounds/sword2.wav")]
+fsound = pygame.mixer.Sound("Sounds/fireball_sound.wav")
+hit = pygame.mixer.Sound("Sounds/enemy_hit.wav")
+
+mmanager = MusicManager()
+mmanager.playsoundtrack(soundtrack[0], -1, 0.05)
+
 class EventHandler():
     def __init__(self):
         self.world = 0
@@ -626,6 +659,7 @@ class EventHandler():
             #print(x)
 
 
+
     def stage_handler(self):
         # Code for the Tkinter stage selection window
         self.root = Tk()
@@ -657,6 +691,7 @@ class EventHandler():
         # ground.image = pygame.image.load("images/Ground.png")
         ground.image = pygame.transform.scale(ground.image, (WIDTH, int(HEIGHT * 0.2)))
         ground.rect = ground.image.get_rect(center=(int(WIDTH / 2), int(HEIGHT * 0.9)))
+        mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
 
         Map.hide = True
         self.battle = True
@@ -668,6 +703,7 @@ class EventHandler():
         #ground.image = pygame.image.load("images/Ground.png")
         ground.image = pygame.transform.scale(ground.image, (WIDTH, int(HEIGHT * 0.2)))
         ground.rect = ground.image.get_rect(center=(int(WIDTH / 2), int(HEIGHT * 0.9)))
+        mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
 
         pygame.time.set_timer(self.enemy_generation2, 2500)
 
@@ -1172,17 +1208,17 @@ class FireBall(pygame.sprite.Sprite):
             player.attacking = False
 
 
+
 class swing(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.direction = player.direction
-
-        self.swoop_ani_R = [pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing1.png").convert(), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15))),
-                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing2.png").convert(), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15))),
-                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing3.png").convert(), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15)))]
-        self.swoop_ani_L = [pygame.transform.scale(pygame.image.load("images/swing1.png").convert(),(int(WIDTH * 0.15), int(HEIGHT * 0.15))),
-                            pygame.transform.scale(pygame.image.load("images/swing2.png").convert(),(int(WIDTH * 0.15), int(HEIGHT * 0.15))),
-                            pygame.transform.scale(pygame.image.load("images/swing3.png").convert(),(int(WIDTH * 0.15), int(HEIGHT * 0.15)))]
+        self.swoop_ani_R = [pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15))),
+                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing2.png"), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15))),
+                            pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/swing3.png"), True, False), (int(WIDTH * 0.15), int(HEIGHT * 0.15)))]
+        self.swoop_ani_L = [pygame.transform.scale(pygame.image.load("images/swing1.png"),(int(WIDTH * 0.15), int(HEIGHT * 0.15))),
+                            pygame.transform.scale(pygame.image.load("images/swing2.png"),(int(WIDTH * 0.15), int(HEIGHT * 0.15))),
+                            pygame.transform.scale(pygame.image.load("images/swing3.png"),(int(WIDTH * 0.15), int(HEIGHT * 0.15)))]
 
         if self.direction == "RIGHT": # resizing
             self.image = pygame.transform.flip(pygame.image.load("images/swing1.png"), True, False)
@@ -1190,7 +1226,7 @@ class swing(pygame.sprite.Sprite):
         else:
             self.image = pygame.image.load("images/swing1.png")
             self.image = pygame.transform.scale(self.image, (int(WIDTH * 0.15), int(HEIGHT * 0.15)))
-        self.rect = self.image.get_rect(center=player.pos)
+        self.rect = self.image.get_rect(center=player.pos)      #TODO: get center of the player sprite instead of the corner
 
         if self.direction == "RIGHT": # spawning object left or right of the player
             self.rect.x = player.pos.x - int(WIDTH*0.03)
@@ -1202,13 +1238,14 @@ class swing(pygame.sprite.Sprite):
         #print(abs(player.rect.x - self.rect.x))
 
         self.rect.y = player.pos.y - int(HEIGHT*0.12)
-        if pygame.sprite.spritecollide(self, Playergroup, False): # TODO: f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
+
+        if abs(player.rect.x - self.rect.x) < 100:
             #print("passed")
             if self.direction == "RIGHT":
                 #self.image = pygame.transform.flip(pygame.image.load("images/swing.png"), True, False)
                 #self.image = pygame.transform.scale(self.image, (105, 105))
 
-                self.image = self.swoop_ani_R[(abs(player.rect.x - self.rect.x) // 4)-1]
+                self.image = self.swoop_ani_R[(abs(player.rect.x - self.rect.x) // 30)-1]
                 #print((abs(player.rect.x - self.rect.x) // 30)-1)
                 displaysurface.blit(self.image, self.rect)
             else:
@@ -1216,7 +1253,7 @@ class swing(pygame.sprite.Sprite):
                 #self.image = pygame.transform.scale(self.image, (105, 105))
                 #self.image = self.swoop_ani_L[abs(player.rect.x - self.rect.x) // 30]
 
-                self.image = self.swoop_ani_L[(abs(player.rect.x - self.rect.x) // 4) - 1]
+                self.image = self.swoop_ani_L[(abs(player.rect.x - self.rect.x) // 30) - 1]
                 #print((abs(player.rect.x - self.rect.x) // 30) - 1)
                 displaysurface.blit(self.image, self.rect)
 
@@ -1229,8 +1266,6 @@ class swing(pygame.sprite.Sprite):
         else:
             self.kill()
             player.attacking = False
-
-
 
 attackCD = 1
 
@@ -1337,6 +1372,7 @@ while True:
                     player.attacking = True
                     fireball = FireBall()
                     Fireballs.add(fireball)
+                    mmanager.playsound(fsound, 0.3)
 
         if event.type == handler.enemy_generation:
             #print(handler.stage)
