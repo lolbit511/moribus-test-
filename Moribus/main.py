@@ -190,6 +190,8 @@ class Player(pygame.sprite.Sprite):
 
                 if self.health <= 0:
                     self.kill()
+                    mmanager.stop()
+                    mmanager.playsoundtrack(soundtrack[2], -1, 0.1)
                     pygame.display.update()
 
     def move(self): #player
@@ -351,13 +353,13 @@ class Item(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, Playergroup, False)
         # Code to be activated if item comes in contact with playerd
         if hits:
-            if player.health < 100 and self.type == 1:
-                player.health += 10
-                if player.health > 100:
-                    player.health = 100
+            #if player.health < 100 and self.type == 1: #############################################################################################################################
+                #player.health += 30
+                #if player.health > 100:
+                    #player.health = 100
                 #health.image = health_ani[player.health]
-                health_ani.image = health_ani[int(player.health / 20)]
-                self.kill()
+                #health_ani.image = health_ani[int(player.health / 20)] # error
+                #self.kill() #############################################################################################################################
             if self.type == 2:
                 # handler.money += 1
                 player.coin += 1
@@ -734,7 +736,7 @@ class EventHandler():
 class Enemy(pygame.sprite.Sprite): #enemy 1  enemy1
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("images/Enemy.png").convert()
+        self.image = pygame.image.load("images/Enemy.png")
 
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
@@ -783,6 +785,7 @@ class Enemy(pygame.sprite.Sprite): #enemy 1  enemy1
         self.rect.center = self.pos  # Updates rect
 
     def player_hit(self): #enemy
+
         if GO.GameEnded != True:
         # print("entering player hit")
             if self.cooldown == False:
@@ -807,6 +810,9 @@ class Enemy(pygame.sprite.Sprite): #enemy 1  enemy1
 
         # Activates upon either of the two expressions being true
         if f_hits or s_hits:
+            #player.health = player.health + 3   ############################################################################################################
+            if player.health > 100:
+                player.health = 100
             if player.mana < 100: player.mana += self.mana  # Release mana
             player.experience += 1  # Release expeiriance
             self.kill()
@@ -960,6 +966,9 @@ class Enemy2(pygame.sprite.Sprite): #second enemy, enemy 2
 
         # Activates upon either of the two expressions being true
         if f_hits or s_hits:
+            #player.health = player.health + 3 # added
+            if player.health > 100:
+                player.health = 100
             self.kill()
             handler.dead_enemy_count += 1
 
@@ -1113,6 +1122,9 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
             self.boltCD = 150
 
         if f_hits or s_hits and self.dmgCD == 25:
+            #player.health = player.health + 3 # added
+            if player.health > 100:
+                player.health = 100
             self.cooldown = True
             self.health -= 1
             if self.health < 0:
