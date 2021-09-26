@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a1c23472-61bd-49d8-a8ca-a85147c510d9" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1s4Bk1ojbJOAey4J5X8sbzj4P24" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Moribus  Copy" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\riesc\PycharmProjects\Moribus" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.main (1)">
+    <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Moribus" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Moribus" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/venv" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/venv/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main (1)" />
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a1c23472-61bd-49d8-a8ca-a85147c510d9" name="Default Changelist" comment="" />
+      <created>1620122120343</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1620122120343</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="907" y="379" key="#Inspections" timestamp="1631948040809">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="907" y="379" key="#Inspections/0.0.2560.1400@0.0.2560.1400" timestamp="1631948040809" />
+    <state x="1166" y="564" key="#Notifications" timestamp="1631947992631">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1166" y="564" key="#Notifications/0.0.2560.1400@0.0.2560.1400" timestamp="1631947992631" />
+    <state x="1061" y="456" key="FileChooserDialogImpl" timestamp="1632636495675">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1061" y="456" key="FileChooserDialogImpl/0.0.2560.1400@0.0.2560.1400" timestamp="1632636495675" />
+    <state width="2539" height="347" key="GridCell.Tab.0.bottom" timestamp="1632636500294">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2539" height="347" key="GridCell.Tab.0.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1632636500294" />
+    <state width="2539" height="347" key="GridCell.Tab.0.center" timestamp="1632636500294">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2539" height="347" key="GridCell.Tab.0.center/0.0.2560.1400@0.0.2560.1400" timestamp="1632636500294" />
+    <state width="2539" height="347" key="GridCell.Tab.0.left" timestamp="1632636500294">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2539" height="347" key="GridCell.Tab.0.left/0.0.2560.1400@0.0.2560.1400" timestamp="1632636500294" />
+    <state width="2539" height="347" key="GridCell.Tab.0.right" timestamp="1632636500294">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2539" height="347" key="GridCell.Tab.0.right/0.0.2560.1400@0.0.2560.1400" timestamp="1632636500294" />
+    <state width="2539" height="179" key="GridCell.Tab.1.bottom" timestamp="1630215093956">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2539" height="179" key="GridCell.Tab.1.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1630215093956" />
+    <state width="2539" height="179" key="GridCell.Tab.1.center" timestamp="1630215093956">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2539" height="179" key="GridCell.Tab.1.center/0.0.2560.1400@0.0.2560.1400" timestamp="1630215093956" />
+    <state width="2539" height="179" key="GridCell.Tab.1.left" timestamp="1630215093956">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2539" height="179" key="GridCell.Tab.1.left/0.0.2560.1400@0.0.2560.1400" timestamp="1630215093956" />
+    <state width="2539" height="179" key="GridCell.Tab.1.right" timestamp="1630215093956">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2539" height="179" key="GridCell.Tab.1.right/0.0.2560.1400@0.0.2560.1400" timestamp="1630215093956" />
+    <state x="782" y="346" key="SettingsEditor" timestamp="1631948285030">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="782" y="346" key="SettingsEditor/0.0.2560.1400@0.0.2560.1400" timestamp="1631948285030" />
+    <state x="935" y="337" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1624441922673">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="935" y="337" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.2560.1400@0.0.2560.1400" timestamp="1624441922673" />
+    <state x="262" y="197" width="2329" height="1134" key="dock-window-1" timestamp="1626947446447">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="262" y="197" width="2329" height="1134" key="dock-window-1/0.0.2560.1400@0.0.2560.1400" timestamp="1626947446447" />
+    <state x="1583" y="320" width="672" height="678" key="search.everywhere.popup" timestamp="1626949905092">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1583" y="320" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400@0.0.2560.1400" timestamp="1626949905092" />
+  </component>
+</project>
