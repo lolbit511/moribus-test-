@@ -1,10 +1,16 @@
 import parameters as p
 import pygame
-import Player
 import Stage
-import PButton
-import Cursor
-import HealthBar
+import PButton as PB
+import Cursor as c
+import HealthBar as HB
+import Map as m
+import EventHandler as e
+import StageDisplay as sd
+import MenuDisplay as md
+import GameOver as go
+import StatusBar as sb
+import swing as s
 
 attackCD = 1
 
@@ -14,21 +20,20 @@ ground_group = p.pygame.sprite.Group()
 ground_group.add(ground)
 
 Items = p.pygame.sprite.Group()
-Pause = PButton()
-Home = PButton()
-savebutton = PButton()
-loadbutton = PButton()
 
-cursor = Cursor()
+Pause = PB.PButton()
+Home = PB.PButton()
+savebutton = PB.PButton()
+loadbutton = PB.PButton()
+
+cursor = c.Cursor()
 Fireballs = p.pygame.sprite.Group()
 Bolts = p.pygame.sprite.Group()
 Swings = p.pygame.sprite.Group()
 
-player = Player()
 Playergroup = p.pygame.sprite.Group()
-Playergroup.add(player)
 
-health = HealthBar()
+
 
 #enemy = Enemy()
 Enemies = p.pygame.sprite.Group()
@@ -36,10 +41,12 @@ Enemies = p.pygame.sprite.Group()
 #Enemies = []
 #Enemies.add(enemy)
 
-Map = Map()
-handler = EventHandler()
-stage_display = StageDisplay()
-menu_display = MenuDisplay()
-GO = GameOver()
+Map = m.Map()
+handler = e.EventHandler()
+stage_display = sd.StageDisplay()
+menu_display = md.MenuDisplay()
+GO = go.GameOver()
 
 mouse = pygame.mouse.get_pos()
+
+status_bar = sb.StatusBar()

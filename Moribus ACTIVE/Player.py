@@ -1,6 +1,9 @@
 import parameters as p
 import pygame
 import MusicManager as mm
+import runtime_parameters as r
+import HealthBar as hb
+
 
 class Player(p.pygame.sprite.Sprite):
     def __init__(self):
@@ -48,7 +51,7 @@ class Player(p.pygame.sprite.Sprite):
         # Stage
         self.stage = 1
         # Health
-        self.health = 100 ##########################################################################################################################################################
+
         self.cooldown = False
 
 
@@ -97,7 +100,7 @@ class Player(p.pygame.sprite.Sprite):
 
 
     def player_hit(self, damage = 10): #player
-        if GO.GameEnded == False: #TODO: the list of variables above while loop
+        if r.GO.GameEnded == False:
 
             #print("entering player hit")
             if self.cooldown == False: #
@@ -105,10 +108,10 @@ class Player(p.pygame.sprite.Sprite):
                 self.cooldown = True  # Enable the cooldown
                 pygame.time.set_timer(p.hit_cooldown, 1000)  # Resets cooldown in 1 second
 
-                self.health = self.health - damage
-                p.health.image = p.health_ani[int(self.health/20)]
+                hb.healthCount = hb.healthCount - damage
+                hb.health.image = p.health_ani[int(hb.healthCount/20)]
 
-                if self.health <= 0:
+                if hb.healthCount <= 0:
                     mm.mmanager.playsound(p.playerDeathSound, 0.3)
                     self.kill()
                     mm.mmanager.stop()
@@ -116,7 +119,7 @@ class Player(p.pygame.sprite.Sprite):
                     pygame.display.update()
 
     def move(self): #player
-        if p.cursor.wait == 1: return
+        if r.cursor.wait == 1: return
         self.acc = p.vec(0, int(p.HEIGHT*0.003)) # player gravity
         # Will set running to False if the player has slowed down to a certain extent
         if abs(self.vel.x) > 0.3:
@@ -130,11 +133,11 @@ class Player(p.pygame.sprite.Sprite):
         # Accelerates the player in the direction of the key press
         if self.attacking == False:
 
-            if pressed_keys[K_LEFT] or pressed_keys[K_a]:
+            if pressed_keys[pygame.K_LEFT] or pressed_keys[pygame.K_a]: #TODO: check if these
                 self.acc.x = -p.ACC
 
 
-            if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
+            if pressed_keys[pygame.K_RIGHT] or pressed_keys[pygame.K_d]:
                 self.acc.x = p.ACC
 
 
@@ -142,7 +145,7 @@ class Player(p.pygame.sprite.Sprite):
         # Formulas to calculate velocity while accounting for friction
         self.acc.x += self.vel.x * p.FRIC
         self.vel += self.acc
-        for SW in Swings:
+        for SW in r.Swings:
             SW.rect.x += self.vel.x + 0.5 * self.acc.x
         self.pos += self.vel + 0.5 * self.acc  # Updates Position with new values
 
@@ -156,7 +159,7 @@ class Player(p.pygame.sprite.Sprite):
 
 
     def attack(self): #player
-        if cursor.wait == 1: return
+        if r.cursor.wait == 1: return
         # If attack frame has reached end of sequence, return to base frame
         if self.attack_frame > self.attCD-1:
             self.attack_frame = 0
@@ -194,7 +197,7 @@ class Player(p.pygame.sprite.Sprite):
             self.jumpheight = -13
             self.jump_timer = 250
 
-        if cursor.wait == 1: return
+        if r.cursor.wait == 1: return
         # Move the character to the next frame if conditions are met
         if self.jumping == False and self.running == True:
             if self.vel.x > 0:
@@ -219,8 +222,8 @@ class Player(p.pygame.sprite.Sprite):
                 self.image = self.run_ani_L[self.move_frame]
 
                 # Checks for collision with the Player
-        if Enemies != None:
-            hits = pygame.sprite.spritecollide(self, Enemies, False)
+        if r.Enemies != None:
+            hits = pygame.sprite.spritecollide(self, r.Enemies, False)
 
                     # Activates upon either of the two expressions being true
             #if hits and player.attacking == True:
@@ -238,7 +241,7 @@ class Player(p.pygame.sprite.Sprite):
 
 
         # Check to see if payer is in contact with the ground
-        hits = pygame.sprite.spritecollide(self, ground_group, False)
+        hits = pygame.sprite.spritecollide(self, r.ground_group, False)
 
         self.rect.x -= 1
 
@@ -246,3 +249,6 @@ class Player(p.pygame.sprite.Sprite):
         if hits and not self.jumping:
             self.jumping = True
             self.vel.y = self.jumpheight
+
+player = Player()
+r.Playergroup.add(player)

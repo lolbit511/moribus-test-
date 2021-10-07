@@ -1,10 +1,11 @@
 import parameters as p
 import pygame
+import runtime_parameters as r
 
 class PButton(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.vec = vec(620, 300)
+        self.vec = p.vec(620, 300)
         self.imgdisp = 0
 
     def render(self, num):
@@ -13,7 +14,7 @@ class PButton(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(self.image,(int(p.WIDTH*0.05),int(p.HEIGHT*0.1)))
             self.vec = p.vec(int(p.WIDTH*0.9), int(p.HEIGHT*0.9))
         elif (num == 1):
-            if p.cursor.wait == 0:
+            if r.cursor.wait == 0:
                 self.image = pygame.image.load("images/pause.png").convert()
             else:
                 self.image = pygame.image.load("images/play.png").convert()

@@ -19,4 +19,4 @@ class MusicManager:
         pygame.mixer.music.stop()
 
 mmanager = MusicManager()
-mmanager.playsoundtrack(p.soundtrack[0], -1, 0.05)
+mmanager.playsoundtrack(p.soundtrack[0], -1, 0.02) # TODO: last value changes volume
