@@ -24,7 +24,10 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
         self.health = 5
         self.dmgCD = 25 #################################################################################################################################################################################
         self.cooldown = False
+        self.bossHealth = hb.HealthBar(200,70)
+        self.bossHealth.render(self.pos.x, self.pos.y, self.health)
 
+        # movement
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
         self.vel.x = 15 / 3  # Randomized velocity of the generated enemy
         self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
@@ -48,7 +51,6 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
 
     def move(self): # boss 1
         if r.cursor.wait == 1: return
-
         # Causes the enemy to change directions upon reaching the end of screen
         if self.pos.x >= (p.WIDTH - 50):
             self.direction = 1
@@ -88,6 +90,7 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
 
     def update(self): # boss 1
 
+        self.bossHealth.render(self.pos.x, self.pos.y -80, self.health)
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, r.Playergroup, False)
         s_hits = pygame.sprite.spritecollide(self, r.Swings, False)
