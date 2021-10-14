@@ -10,7 +10,7 @@ import EventHandler as e
 import HealthBar as hb
 import Item as it
 
-class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
+class Enemy(pygame.sprite.Sprite): # Enemy1
     def __init__(self):
         super().__init__()
         self.pos = p.vec(0, 0)
@@ -36,12 +36,13 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
 
 
         if self.direction == 0:
-            self.image = pygame.image.load("images/bosses/boss1_R.png")
+            self.image = pygame.image.load("images/Enemy.png")
         elif self.direction == 1:
-            self.image = pygame.image.load("images/bosses/boss1.png")
+            self.image = pygame.image.load("images/Enemy.png")
 
         self.image = pygame.transform.scale(self.image, (int(p.WIDTH*0.08), int(p.HEIGHT*0.20)))
         self.rect = self.image.get_rect()
+
 
         # Sets the initial position of the enemy  #to-do: maybe allow enemy 2 to generate at different heights
         if self.direction == 0:
@@ -51,46 +52,24 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
             self.pos.x = self.pos.x = int(p.WIDTH*0.95)
             self.pos.y = int(p.HEIGHT*0.64)
 
-    def move(self): # boss 1
+    def move(self):  # enemy
         if r.cursor.wait == 1: return
+
         # Causes the enemy to change directions upon reaching the end of screen
-        if self.pos.x >= (p.WIDTH - 50):
+        if self.pos.x >= (p.WIDTH - int(p.WIDTH * 0.08)):
             self.direction = 1
         elif self.pos.x <= 0:
             self.direction = 0
         # Updates position with new values
-        if self.wait > 50:
-            self.wait_status = True
-        elif int(self.wait) <= 0:
-            self.wait_status = False
-
-        if self.wait_status == True:
-            rand_num = numpy.random.uniform(0, 50)
-            if int(rand_num) == 25 and self.boltCD > 0 and self.fired == False:
-                self.fired = True
-                bolt = bl.Bolt(self.pos.x, self.pos.y, self.direction)
-                r.Bolts.add(bolt)
-            self.wait -= 1
-
-        if (self.direction_check()):
-            self.turn()
-            self.wait = 90
-            self.turning = 1
-
-        if self.wait_status == True: # determines how long the entity waits
-            self.wait -= 5
-
-        elif self.direction == 0:
+        if self.direction == 0:
             self.pos.x += self.vel.x
-            self.wait += self.vel.x
-        elif self.direction == 1:
+        if self.direction == 1:
             self.pos.x -= self.vel.x
-            self.wait += self.vel.x
 
-        self.rect.topleft = self.pos  # Updates rect
+        self.rect.center = self.pos  # Updates rect
 
 
-    def update(self): # boss 1
+    def update(self): # Enemy1
         self.bossHealth.image = p.health_ani[int(self.health)]
         self.bossHealth.image = pygame.transform.scale(self.bossHealth.image, (self.hbWidth,self.hbHeight))
         self.bossHealth.render(5,self.pos.x, self.pos.y -100, True)
@@ -147,7 +126,10 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
 
     def render(self):
         # Displays the enemy on screen
+        self.rect.y = self.pos.y + int(p.HEIGHT * 0.01)
         p.displaysurface.blit(self.image, self.rect)
+
+
 
     def direction_check(self):
         if (pl.player.pos.x - self.pos.x < 0 and self.direction == 0):
@@ -157,20 +139,3 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
         else:
             return 0
 
-    def turn(self): # self.wait is not decreasing fast enough
-        if self.wait > 0:
-            self.wait -= 1
-
-        elif int(self.wait) <= 0:
-            self.turning = 0
-        print("turning")
-        if (self.direction):
-            self.direction = 0
-            self.image = pygame.image.load("images/bosses/boss1_R.png")
-
-            self.image = pygame.transform.scale(self.image, (int(p.WIDTH*0.08), int(p.HEIGHT*0.20)))
-        else:
-            self.direction = 1
-            self.image = pygame.image.load("images/bosses/boss1.png")
-
-            self.image = pygame.transform.scale(self.image, (int(p.WIDTH*0.08), int(p.HEIGHT*0.20)))

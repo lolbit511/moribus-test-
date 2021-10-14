@@ -3,6 +3,7 @@ import pygame
 import runtime_parameters as r
 import Player as pl
 import MusicManager as mm
+import HealthBar as hb
 
 volume = 0.02
 
@@ -83,7 +84,7 @@ class EventHandler():
         f.write(str(pl.player.experience) + "\n")
         f.write(str(pl.player.mana) + "\n")
         f.write(str(pl.player.coin) + "\n")
-        f.write(str(pl.player.health) +"\n")
+        f.write(str(hb.healthCount) +"\n")
 
         f.close()
 

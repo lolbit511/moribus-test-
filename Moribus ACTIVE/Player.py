@@ -16,7 +16,7 @@ class Player(p.pygame.sprite.Sprite):
         self.xRatio = int(0.10 * p.WIDTH)
         self.yRatio = int(0.19 * p.HEIGHT)
 
-        self.image = p.pygame.image.load("images/player.png")
+        self.image = p.pygame.image.load("images/player.png").convert()
         #self.imageorg = self.image
         #cropped = pygame.Surface((80, 80))
         #cropped.blit(self.image, (-80, -80))
@@ -71,30 +71,30 @@ class Player(p.pygame.sprite.Sprite):
         #              pygame.transform.flip(pygame.image.load("player.png"), True, False)]
 
         # Run animation for the RIGHT
-        self.run_ani_R = [pygame.transform.flip(pygame.image.load("images/player.png"), True, False),
-                          pygame.transform.flip(pygame.image.load("images/player.png"), True, False),
-                          pygame.transform.flip(pygame.image.load("images/player.png"), True, False),
-                          pygame.transform.flip(pygame.image.load("images/player.png"), True, False),
-                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png"), True, False),
-                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png"), True, False),
-                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png"), True, False),
-                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png"), True, False)]
+        self.run_ani_R = [pygame.transform.flip(pygame.image.load("images/player.png").convert(), True, False),
+                          pygame.transform.flip(pygame.image.load("images/player.png").convert(), True, False),
+                          pygame.transform.flip(pygame.image.load("images/player.png").convert(), True, False),
+                          pygame.transform.flip(pygame.image.load("images/player.png").convert(), True, False),
+                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png").convert(), True, False),
+                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png").convert(), True, False),
+                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png").convert(), True, False),
+                          pygame.transform.flip(pygame.image.load("images/playerWalk1.png").convert(), True, False)]
 
-        self.run_ani_L = [pygame.image.load("images/player.png"), pygame.image.load("images/player.png"),
-                     pygame.image.load("images/player.png"), pygame.image.load("images/player.png"),
-                     pygame.image.load("images/playerWalk1.png"), pygame.image.load("images/playerWalk1.png"),
-                     pygame.image.load("images/playerWalk1.png"), pygame.image.load("images/playerWalk1.png")]
+        self.run_ani_L = [pygame.image.load("images/player.png").convert(), pygame.image.load("images/player.png").convert(),
+                     pygame.image.load("images/player.png").convert(), pygame.image.load("images/player.png").convert(),
+                     pygame.image.load("images/playerWalk1.png").convert(), pygame.image.load("images/playerWalk1.png").convert(),
+                     pygame.image.load("images/playerWalk1.png").convert(), pygame.image.load("images/playerWalk1.png").convert()]
 
-        self.att_ani_R = [pygame.transform.flip(pygame.image.load("images/player.png"), True, False)]
-        self.att_ani_R = self.att_ani_R + [pygame.transform.flip(pygame.image.load("images/sword.png"), True, False)] * self.attCD
+        self.att_ani_R = [pygame.transform.flip(pygame.image.load("images/player.png").convert(), True, False)]
+        self.att_ani_R = self.att_ani_R + [pygame.transform.flip(pygame.image.load("images/sword.png").convert(), True, False)] * self.attCD
 
-        self.att_ani_R.append(pygame.image.load("images/player.png"))
+        self.att_ani_R.append(pygame.image.load("images/player.png").convert())
 
 
         #print(self.att_ani_R)
-        self.att_ani_L = [pygame.image.load("images/player.png")]
-        self.att_ani_L = self.att_ani_L + [pygame.image.load("images/sword.png")] * self.attCD
-        self.att_ani_L.append(pygame.transform.flip(pygame.image.load("images/player.png"), True, False))
+        self.att_ani_L = [pygame.image.load("images/player.png").convert()]
+        self.att_ani_L = self.att_ani_L + [pygame.image.load("images/sword.png").convert()] * self.attCD
+        self.att_ani_L.append(pygame.transform.flip(pygame.image.load("images/player.png").convert(), True, False))
 
         #print(self.att_ani_L)
 

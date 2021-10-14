@@ -25,9 +25,9 @@ class Enemy2(pygame.sprite.Sprite):  # second enemy, enemy 2
         self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
 
         if self.direction == 0:
-            self.image = pygame.image.load("images/enemy2.png")
+            self.image = pygame.image.load("images/enemy2.png").convert()
         elif self.direction == 1:
-            self.image = pygame.image.load("images/enemy2_L.png")
+            self.image = pygame.image.load("images/enemy2_L.png").convert()
         self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
         self.rect = self.image.get_rect()
 
@@ -135,11 +135,11 @@ class Enemy2(pygame.sprite.Sprite):  # second enemy, enemy 2
         print("turning")
         if (self.direction):
             self.direction = 0
-            self.image = pygame.image.load("images/enemy2.png")
+            self.image = pygame.image.load("images/enemy2.png").convert()
 
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
         else:
             self.direction = 1
-            self.image = pygame.image.load("images/enemy2_L.png")
+            self.image = pygame.image.load("images/enemy2_L.png").convert()
 
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))

@@ -47,7 +47,7 @@ class swing(pygame.sprite.Sprite):
                 #self.image = pygame.transform.scale(self.image, (105, 105))
                 #self.image = self.swoop_ani_L[abs(player.rect.x - self.rect.x) // 30]
 
-                self.image = self.swoop_ani_L[(abs(pl.player.rect.x - self.rect.x) // 30) - 1]
+                self.image = self.swoop_ani_L[(abs(pl.player.rect.x - self.rect.x) // 30)-1]
                 #print((abs(player.rect.x - self.rect.x) // 30) - 1)
                 p.displaysurface.blit(self.image, self.rect)
 

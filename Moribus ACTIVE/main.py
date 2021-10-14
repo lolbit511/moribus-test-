@@ -15,7 +15,7 @@ import EventHandler as e
 import MusicManager as mm
 import runtime_parameters as r
 import Fireball as fb
-import Enemy1 as e1
+import Enemy as e1
 import Enemy2 as e2
 import Boss1 as b1
 import swing as s
@@ -163,7 +163,7 @@ while True:
         pl.player.image = pygame.transform.scale(pl.player.image, (pl.player.xRatio, pl.player.yRatio))
         p.displaysurface.blit(pl.player.image, pl.player.rect)
 
-    hb.health.render()
+    hb.health.render(hb.healthCount)
 
     if r.Enemies != None:
         for entity in r.Enemies:
