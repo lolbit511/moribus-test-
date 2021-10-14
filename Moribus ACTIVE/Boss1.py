@@ -31,7 +31,7 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
 
         # movement
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
-        self.vel.x = 15 / 3  # Randomized velocity of the generated enemy
+        self.vel.x = random.randint(8, 13)  # Randomized velocity of the generated enemy
         self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
 
 
