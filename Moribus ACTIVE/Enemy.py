@@ -21,11 +21,15 @@ class Enemy(pygame.sprite.Sprite): # Enemy1
         self.boltCD = 150
         self.fired = False
         # health
-        self.health = 5
-        self.dmgCD = 25 #################################################################################################################################################################################
+        self.health = 2
+        self.maxhealth = self.health
+
+        self.iframes = 15  # default value
+        self.dmgCD = self.iframes
+
         self.cooldown = False
-        self.hbWidth = 200
-        self.hbHeight = 80
+        self.hbWidth = int(p.HEIGHT*0.166)
+        self.hbHeight = int(p.HEIGHT*0.0666)
         self.bossHealth = hb.HealthBar(self.hbWidth,self.hbHeight)
         self.bossHealth.render(5, self.pos.x, self.pos.y, True)
 
@@ -70,9 +74,9 @@ class Enemy(pygame.sprite.Sprite): # Enemy1
 
 
     def update(self): # Enemy1
-        self.bossHealth.image = p.health_ani[int(self.health)]
+        self.bossHealth.image = p.health_ani[int((self.health/self.maxhealth)*5)]
         self.bossHealth.image = pygame.transform.scale(self.bossHealth.image, (self.hbWidth,self.hbHeight))
-        self.bossHealth.render(5,self.pos.x, self.pos.y -100, True)
+        self.bossHealth.render(5,self.pos.x-int(p.HEIGHT*0.092), self.pos.y-int(p.HEIGHT*0.07), True)
 
     # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, r.Playergroup, False)
@@ -90,11 +94,11 @@ class Enemy(pygame.sprite.Sprite): # Enemy1
             self.dmgCD -= 1
         if self.dmgCD < 0:
             self.cooldown = False
-            self.dmgCD = 25
+            self.dmgCD = self.iframes
 
             self.boltCD = 150
 
-        if f_hits or s_hits and self.dmgCD == 25: # TODO: add iframes
+        if f_hits or s_hits and self.dmgCD == self.iframes: # TODO: add iframes
             mm.mmanager.playsound(p.e3HitSound, 0.3)
             #player.health = player.health + 3 # added
             if hb.healthCount > 100:

@@ -24,8 +24,8 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
         self.health = 5
         self.dmgCD = 25 #################################################################################################################################################################################
         self.cooldown = False
-        self.hbWidth = 200
-        self.hbHeight = 80
+        self.hbWidth = int(p.HEIGHT*0.166)
+        self.hbHeight = int(p.HEIGHT*0.0666)
         self.bossHealth = hb.HealthBar(self.hbWidth,self.hbHeight)
         self.bossHealth.render(5, self.pos.x, self.pos.y, True)
 
@@ -93,7 +93,7 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
     def update(self): # boss 1
         self.bossHealth.image = p.health_ani[int(self.health)]
         self.bossHealth.image = pygame.transform.scale(self.bossHealth.image, (self.hbWidth,self.hbHeight))
-        self.bossHealth.render(5,self.pos.x, self.pos.y -100, True)
+        self.bossHealth.render(5,self.pos.x, self.pos.y - int(p.HEIGHT*0.083) + 20, True)
 
     # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, r.Playergroup, False)
