@@ -36,7 +36,7 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
 
         # movement
         self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
-        self.vel.x = random.randint(5, 10)  # Randomized velocity of the generated enemy
+        self.vel.x = random.randint(3, 8)  # Randomized velocity of the generated enemy
         self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
 
 
@@ -71,28 +71,34 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
 
         if self.wait_status == True:
             rand_num = numpy.random.uniform(0, 50)
-            if int(rand_num) == 25 and self.boltCD > 0 and self.fired == False:
+            if int(rand_num) <= 25 and self.boltCD > 0 and self.fired == False:
                 self.fired = True
                 bolt = bl.Bolt(self.pos.x, self.pos.y, self.direction)
                 r.Bolts.add(bolt)
             self.wait -= 1
 
+        if self.wait_status:
+            self.image = pygame.image.load("images/enemy2Panic.png")
+            self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
+
         if (self.direction_check()):
             self.turn()
-            self.wait = 500 ##################################################################################################################################
+            self.wait = 100 ##################################################################################################################################
             self.turning = 1
 
-        if self.wait_status == True: # determines how long the entity waits
-            self.wait -= 5
-
-        elif self.direction == 0:
-            self.pos.x += self.vel.x
-            #self.wait += self.vel.x
-        elif self.direction == 1:
-            self.pos.x -= self.vel.x
-            #self.wait += self.vel.x
+        if abs(pl.player.pos.x - self.pos.x) < int(p.WIDTH*0.5):
+            if self.wait_status == True: # determines how long the entity waits
+                self.wait -= 5
+            elif self.direction == 0:
+                self.pos.x += self.vel.x
+                #self.wait += self.vel.x
+            elif self.direction == 1:
+                self.pos.x -= self.vel.x
+                #self.wait += self.vel.x
 
         self.rect.topleft = self.pos  # Updates rect
+
+
 
 
     def update(self): # boss 1
@@ -100,17 +106,19 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
         self.bossHealth.image = pygame.transform.scale(self.bossHealth.image, (self.hbWidth,self.hbHeight))
         self.bossHealth.render(5,self.pos.x, self.pos.y - int(p.HEIGHT*0.083) + 20, True)
 
-    # Checks for collision with the Player
+
+
+        # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, r.Playergroup, False)
         s_hits = pygame.sprite.spritecollide(self, r.Swings, False)
 
         # Checks for collision with Fireballs
         f_hits = pygame.sprite.spritecollide(self, r.Fireballs, False)
-        print(" ")
-        print("health:", self.health)
-        print("cooldown:", self.boltCD)
+        #print(" ")
+        #print("health:", self.health)
+        #print("cooldown:", self.boltCD)
 
-        print(" ")
+        print(self.wait)
         # Activates upon either of the two expressions being true
         if self.cooldown == True:
             self.dmgCD -= 1
