@@ -34,6 +34,10 @@ class Bolt(pygame.sprite.Sprite):
 
         # Checks for collision with the Player
         hits = pygame.sprite.spritecollide(self, r.Playergroup, False)
-        if hits:
+        if hits and pl.player.sheildUp == False:
             pl.player.player_hit(15)
+            self.kill()
+        elif hits and pl.player.sheildUp == True:
+            pl.player.player_hit(0)
+            pl.player.mana = pl.player.mana - 0.1
             self.kill()

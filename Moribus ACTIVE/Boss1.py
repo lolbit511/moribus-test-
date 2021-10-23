@@ -91,6 +91,9 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
 
 
     def update(self): # boss 1
+
+
+
         self.bossHealth.image = p.health_ani[int(self.health)]
         self.bossHealth.image = pygame.transform.scale(self.bossHealth.image, (self.hbWidth,self.hbHeight))
         self.bossHealth.render(5,self.pos.x, self.pos.y - int(p.HEIGHT*0.083) + 20, True)

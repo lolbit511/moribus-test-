@@ -57,7 +57,7 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
             self.pos.y = int(p.HEIGHT*0.64)
 
     def move(self): # boss 1
-        if r.cursor.wait == 1: return
+        #if r.cursor.wait == 1: return
         # Causes the enemy to change directions upon reaching the end of screen
         if self.pos.x >= (p.WIDTH - 50):
             self.direction = 1
@@ -77,9 +77,19 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
                 r.Bolts.add(bolt)
             self.wait -= 1
 
-        if self.wait_status:
+        if self.wait_status and self.direction == 0:
             self.image = pygame.image.load("images/enemy2Panic.png")
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
+        elif self.wait_status and self.direction == 1:
+            self.image = pygame.transform.flip(pygame.image.load("images/enemy2Panic.png"), True, False) # TODO: make another sprite so the question mark is not flipped
+            self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
+        elif self.direction == 0:
+            self.image = pygame.image.load("images/enemy2.png")
+            self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
+        elif self.direction == 1:
+            self.image = pygame.image.load("images/enemy2_L.png")
+            self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
+
 
         if (self.direction_check()):
             self.turn()
@@ -170,7 +180,7 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
         else:
             return 0
 
-    def turn(self): # self.wait is not decreasing fast enough
+    def turn(self):
         if self.wait > 0:
             self.wait -= 1
 
@@ -178,12 +188,12 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
             self.turning = 0
         print("turning")
         if (self.direction):
-            self.direction = 0
+            self.direction = 0# right
             self.image = pygame.image.load("images/enemy2.png")
 
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH*0.08), int(p.HEIGHT*0.20)))
         else:
-            self.direction = 1
+            self.direction = 1# left
             self.image = pygame.image.load("images/enemy2_L.png")
 
-            self.image = pygame.transform.scale(self.image, (int(p.WIDTH*0.08), int(p.HEIGHT*0.20))) #
+            self.image = pygame.transform.scale(self.image, (int(p.WIDTH*0.08), int(p.HEIGHT*0.20)))

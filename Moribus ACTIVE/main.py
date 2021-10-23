@@ -26,9 +26,7 @@ pl.player.image = pygame.image.load("images/empty.png")
 while True:
     #print(player.experience)
 
-    #player.health = 5  # cheat code 1
-    pl.player.mana = 12  # cheat code 2
-    #nEventHandler.phase = 100  # cheat code 3
+
 
     a = datetime.datetime.now()
     #print(Enemies)
@@ -108,6 +106,14 @@ while True:
 
                 # Event handling for a range of different key presses
         # Event handling for a range of different key presses
+
+        # if event.type == pygame.KEYDOWN and r.cursor.wait == 0 and event.key == pygame.K_y:  ################################################################################################################################################################################################################################################
+        #     pl.player.sheildUp = True
+        #     print("shieldUp TRUE")
+        # else:
+        #     pl.player.sheildUp = False
+        #     print("shieldUp FALSE")
+
         if event.type == pygame.KEYDOWN and r.cursor.wait == 0: #int(WIDTH * 0.4), int(HEIGHT * 0.53)
             if int(p.WIDTH * 0.4) < pl.player.rect.x < int(p.WIDTH * 0.6) and event.key == pygame.K_e and r.handler.world == 0:
                 r.handler.stage_handler()

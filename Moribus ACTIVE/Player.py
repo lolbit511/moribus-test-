@@ -42,9 +42,12 @@ class Player(p.pygame.sprite.Sprite):
         self.attack_frame = 0
         self.attCD = 100
         self.slash = 0
+        # sheild
+        self.sheildUp = False
 
+        # stats
         self.experience = 0
-        self.mana = 0
+        self.mana = 80
         self.coin = 0
         self.magic_cooldown = 1
 
@@ -159,6 +162,8 @@ class Player(p.pygame.sprite.Sprite):
 
 
     def attack(self): #player
+
+
         if r.cursor.wait == 1: return
         # If attack frame has reached end of sequence, return to base frame
         if self.attack_frame > self.attCD-1:
@@ -191,6 +196,24 @@ class Player(p.pygame.sprite.Sprite):
 
 
     def update(self): #player
+        if self.sheildUp == True:
+            print("blocking")
+        else:
+            print("NOT")
+        pressed_keys = pygame.key.get_pressed()
+        if pressed_keys[pygame.K_y]:
+            self.sheildUp = True
+
+        else:
+            self.sheildUp = False
+
+            # Cheats
+        if hb.healthCount < 50:
+            hb.healthCount = 100  # cheat code 1
+        #if player.mana < 10:
+            #player.mana = 12  # cheat code 2
+        # nEventHandler.phase = 100  # cheat code 3
+
         if self.jumpheight == -18:
             self.jump_timer -= 1
         if self.jump_timer < 0:
@@ -249,6 +272,7 @@ class Player(p.pygame.sprite.Sprite):
         if hits and not self.jumping:
             self.jumping = True
             self.vel.y = self.jumpheight
+
 
 player = Player()
 r.Playergroup.add(player)
