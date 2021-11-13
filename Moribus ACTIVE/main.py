@@ -44,13 +44,13 @@ while True:
             if int(p.WIDTH-int(p.WIDTH*0.05)) <= mouse[0] <= int(p.WIDTH) and int(p.HEIGHT-int(p.HEIGHT*0.1)) <= mouse[1] <= p.HEIGHT:
                 r.cursor.pause()
                 mm.mmanager.playsound(p.bsound, 0.2)
-            if int(p.WIDTH-int(p.WIDTH*0.1)) <= mouse[0] <= int(p.WIDTH) and int(p.HEIGHT-int(p.HEIGHT*0.1)) <= mouse[1] <= p.HEIGHT:
+            elif int(p.WIDTH-int(p.WIDTH*0.1)) <= mouse[0] <= int(p.WIDTH) and int(p.HEIGHT-int(p.HEIGHT*0.1)) <= mouse[1] <= p.HEIGHT:
                 r.handler.home()
                 mm.mmanager.playsound(p.bsound, 0.2)
-            if int(p.WIDTH-int(p.WIDTH*0.15)) <= mouse[0] <= int(p.WIDTH) and int(p.HEIGHT-int(p.HEIGHT*0.1)) <= mouse[1] <= p.HEIGHT:
+            elif int(p.WIDTH-int(p.WIDTH*0.15)) <= mouse[0] <= int(p.WIDTH) and int(p.HEIGHT-int(p.HEIGHT*0.1)) <= mouse[1] <= p.HEIGHT:
                 r.handler.saveG()
                 mm.mmanager.playsound(p.bsound, 0.2)
-            if int(p.WIDTH-int(p.WIDTH*0.2)) <= mouse[0] <= int(p.WIDTH) and int(p.HEIGHT-int(p.HEIGHT*0.1)) <= mouse[1] <= p.HEIGHT:
+            elif int(p.WIDTH-int(p.WIDTH*0.2)) <= mouse[0] <= int(p.WIDTH) and int(p.HEIGHT-int(p.HEIGHT*0.1)) <= mouse[1] <= p.HEIGHT:
                 r.handler.loadG()
                 mm.mmanager.playsound(p.bsound, 0.2)
 
@@ -169,20 +169,22 @@ while True:
         pl.player.image = pygame.transform.scale(pl.player.image, (pl.player.xRatio, pl.player.yRatio))
         p.displaysurface.blit(pl.player.image, pl.player.rect)
 
-    hb.health.render(hb.healthCount)
+    hb.health.render(hb.healthCount)  # updates healthbar image
 
-    if r.Enemies != None:
-        for entity in r.Enemies:
-            #print(entity.boltCD)
-            entity.update()
-            entity.move()
-            entity.render()
 
-            if entity.boltCD > 0 and entity.fired == True:
-                entity.boltCD -= 1
-            else:
-                entity.boltCD = 150
-                entity.fired = False
+    if r.cursor.wait == 0:
+        if r.Enemies != None:
+            for entity in r.Enemies:
+                #print(entity.boltCD)
+                entity.update()
+                entity.move()
+                entity.render()
+
+                if entity.boltCD > 0 and entity.fired == True:
+                    entity.boltCD -= 1
+                else:
+                    entity.boltCD = 150
+                    entity.fired = False
 
 
 
@@ -191,31 +193,31 @@ while True:
 
     # Player related functions
 
-    if pl.player.attacking == True:
-        pl.player.attack()
-        #print("attacked")
+        if pl.player.attacking == True:
+            pl.player.attack()
+            #print("attacked")
 
-    for i in r.Items:
-        i.render()
-        i.update()
+        for i in r.Items:
+            i.render()
+            i.update()
 
-    for SW in r.Swings:
-        SW.attack()
-    for ball in r.Fireballs:
-        ball.fire()
-    for bolt in r.Bolts:
-        bolt.fire()
+        for SW in r.Swings:
+            SW.attack()
+        for ball in r.Fireballs:
+            ball.fire()
+        for bolt in r.Bolts:
+            bolt.fire()
 
 
-    if pl.player.startdone == False:
-        if pl.player.start == True :
-            pl.player.image = pygame.transform.scale(pl.player.image, (pl.player.xRatio, pl.player.yRatio)) ############################################################################################
-            pl.player.start = False
-            r.menu_display.display = False
-            pl.player.startdone = True
-    else:
-        pl.player.update()
-        pl.player.move()
+        if pl.player.startdone == False:
+            if pl.player.start == True :
+                pl.player.image = pygame.transform.scale(pl.player.image, (pl.player.xRatio, pl.player.yRatio)) ############################################################################################
+                pl.player.start = False
+                r.menu_display.display = False
+                pl.player.startdone = True
+        else:
+            pl.player.update()
+            pl.player.move()
 
 
     #print("player rect:",player.rect)

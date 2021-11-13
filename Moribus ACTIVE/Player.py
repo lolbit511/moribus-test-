@@ -208,9 +208,10 @@ class Player(p.pygame.sprite.Sprite):
         else:
             self.sheildUp = False
 
-            # Cheats
-        if hb.healthCount < 50:
+        # Cheats ##########################################################################################################################################################################################################################################################
+        if hb.healthCount < 25:
             hb.healthCount = 100  # cheat code 1
+            pass
         #if player.mana < 10:
             #player.mana = 12  # cheat code 2
         # nEventHandler.phase = 100  # cheat code 3

@@ -41,8 +41,6 @@ health_ani = [pygame.image.load("images/heart0.png"), pygame.image.load("images/
                       pygame.image.load("images/heart4.png"), pygame.image.load("images/heart5.png")]
 
 
-
-
 # Music and Sound ################################################################################################################################################################################################################################################
 
 # mmanager.playsound(fsound, 0.3) < copy paste

@@ -57,7 +57,7 @@ class EventHandler():
         self.battle = False
         self.enemy_count = 0
         self.dead_enemy_count = 0
-        self.stage = 1
+        #self.stage = 1
         self.world = 0
 
         # Destroy any enemies or items lying around
@@ -97,7 +97,10 @@ class EventHandler():
             pl.player.experience = int(f.readline())
             pl.player.mana = int(f.readline())
             pl.player.coin = int(f.readline())
-            pl.player.health = int(f.readline())
+            hb.healthCount = int(f.readline())
+        hb.health.image = p.health_ani[int(hb.healthCount / 20)]
+        hb.health.render(hb.healthCount)  # updates healthbar image
+
 
         #or, readlines reads the individual line into a list
         #fl = f.readlines()
