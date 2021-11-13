@@ -128,7 +128,7 @@ class Boss1(pygame.sprite.Sprite): #boss, first boss boss 1
             if self.health < 0:
                 mm.mmanager.playsound(p.e3DeathSound, 0.3)
                 if pl.player.mana < 100: pl.player.mana += self.mana  # Release mana
-                pl.player.experience += 1  # Release expeiriance
+                pl.player.experience += 1  # Release experience
 
                 rand_num = numpy.random.uniform(0, 100)
                 item_no = 0

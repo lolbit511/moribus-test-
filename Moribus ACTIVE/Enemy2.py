@@ -83,10 +83,10 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
         elif self.wait_status and self.direction == 1:
             self.image = pygame.transform.flip(pygame.image.load("images/enemy2Panic.png"), True, False) # TODO: make another sprite so the question mark is not flipped
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
-        elif self.direction == 0:
+        elif self.direction == 0 and (pl.player.pos.x - self.pos.x < 0 and self.direction == 1):
             self.image = pygame.image.load("images/enemy2.png")
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
-        elif self.direction == 1:
+        elif self.direction == 1 and (pl.player.pos.x - self.pos.x < 0 and self.direction == 0):
             self.image = pygame.image.load("images/enemy2_L.png")
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
 

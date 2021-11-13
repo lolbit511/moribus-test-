@@ -196,12 +196,13 @@ class Player(p.pygame.sprite.Sprite):
 
 
     def update(self): #player
-        if self.sheildUp == True:
+        if self.sheildUp == True and self.mana > 0:
             print("blocking")
+            self.mana = self.mana - 0.1
         else:
             print("NOT")
         pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[pygame.K_y]:
+        if pressed_keys[pygame.K_s]:
             self.sheildUp = True
 
         else:
