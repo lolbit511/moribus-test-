@@ -40,4 +40,5 @@ class Bolt(pygame.sprite.Sprite):
         elif hits and pl.player.sheildUp == True:
             pl.player.player_hit(0)
             pl.player.mana = pl.player.mana - 5
+
             self.kill()

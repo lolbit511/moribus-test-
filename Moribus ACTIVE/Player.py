@@ -47,7 +47,7 @@ class Player(p.pygame.sprite.Sprite):
 
         # stats
         self.experience = 0
-        self.mana = 80
+        self.mana = 50
         self.coin = 0
         self.magic_cooldown = 1
 
@@ -196,15 +196,16 @@ class Player(p.pygame.sprite.Sprite):
 
 
     def update(self): #player
+        if self.mana < 0:
+            self.mana = 0
         if self.sheildUp == True and self.mana > 0:
             print("blocking")
             self.mana = self.mana - 0.1
         else:
             print("NOT")
         pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[pygame.K_s]:
+        if pressed_keys[pygame.K_s] and self.mana > 0:
             self.sheildUp = True
-
         else:
             self.sheildUp = False
 
