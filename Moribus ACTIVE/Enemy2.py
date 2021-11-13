@@ -39,6 +39,11 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
         self.vel.x = random.randint(3, 8)  # Randomized velocity of the generated enemy
         self.mana = random.randint(2, 3)  # Randomized mana amount obtained upon
 
+        # image
+        self.panic_R = pygame.image.load("images/enemy2Panic.png")
+        #self.panic_L = pygame.image.load("images/enemy2Panic.png") #TODO: add left image for panic
+        self.normal_R = pygame.image.load("images/enemy2.png")
+        self.normal_L = pygame.image.load("images/enemy2_L.png")
 
         if self.direction == 0:
             self.image = pygame.image.load("images/enemy2.png")
@@ -78,18 +83,24 @@ class Enemy2(pygame.sprite.Sprite): #boss, first boss boss 1
             self.wait -= 1
 
         if self.wait_status and self.direction == 0:
-            self.image = pygame.image.load("images/enemy2Panic.png")
+            self.image = self.panic_R
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
         elif self.wait_status and self.direction == 1:
-            self.image = pygame.transform.flip(pygame.image.load("images/enemy2Panic.png"), True, False) # TODO: make another sprite so the question mark is not flipped
+            self.image = pygame.transform.flip(self.panic_R, True, False) # TODO: make another sprite so the question mark is not flipped
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
         elif self.direction == 0 and (pl.player.pos.x - self.pos.x < 0 and self.direction == 1):
-            self.image = pygame.image.load("images/enemy2.png")
+            self.image = self.normal_R
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
         elif self.direction == 1 and (pl.player.pos.x - self.pos.x < 0 and self.direction == 0):
-            self.image = pygame.image.load("images/enemy2_L.png")
+            self.image = self.normal_L
             self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
-
+        else:
+            if self.direction == 0:
+                self.image = self.normal_R
+                self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
+            else:
+                self.image = self.normal_L
+                self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.08), int(p.HEIGHT * 0.20)))
 
         if (self.direction_check()):
             self.turn()
