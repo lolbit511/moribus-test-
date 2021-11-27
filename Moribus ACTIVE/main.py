@@ -1,12 +1,11 @@
-import numpy
-import pygame # THIS IS THE ACTUAL FILE ON GITHUB (18/9/2021)
+import contextlib
+with contextlib.redirect_stdout(None):
+    import pygame # THIS IS THE ACTUAL FILE ON GITHUB (21/11/2021)
+
+
 from pygame.locals import *
-import sys
-import random
-from tkinter import filedialog
 from tkinter import *
 import datetime
-import time
 
 import parameters as p
 import Player as pl

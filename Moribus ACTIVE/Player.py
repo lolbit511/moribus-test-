@@ -111,8 +111,13 @@ class Player(p.pygame.sprite.Sprite):
                 self.cooldown = True  # Enable the cooldown
                 pygame.time.set_timer(p.hit_cooldown, 1000)  # Resets cooldown in 1 second
 
-                hb.healthCount = hb.healthCount - damage
-                hb.health.image = p.health_ani[int(hb.healthCount/20)]
+                if self.sheildUp == True and self.mana > 0:
+                    hb.healthCount = hb.healthCount - int(damage * 0.8)
+                    self.mana = self.mana - 10
+                    hb.health.image = p.health_ani[int(hb.healthCount/20)]
+                else:
+                    hb.healthCount = hb.healthCount - damage
+                    hb.health.image = p.health_ani[int(hb.healthCount / 20)]
 
                 if hb.healthCount <= 0:
                     mm.mmanager.playsound(p.playerDeathSound, 0.3)
@@ -204,7 +209,8 @@ class Player(p.pygame.sprite.Sprite):
         else:
             print("NOT")
         pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[pygame.K_s] and self.mana > 0:
+
+        if pressed_keys[pygame.K_s]:
             self.sheildUp = True
         else:
             self.sheildUp = False
@@ -257,6 +263,7 @@ class Player(p.pygame.sprite.Sprite):
                 # print("Enemy killed")
 
             # If collision has occured and player not attacking, call "hit" function
+
             if hits and self.attacking == False:
                 self.player_hit()
 

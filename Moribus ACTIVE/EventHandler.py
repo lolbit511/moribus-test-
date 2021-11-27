@@ -75,8 +75,8 @@ class EventHandler():
         r.ground.rect = r.ground.image.get_rect(center=(int(p.WIDTH / 2), int(p.HEIGHT * 0.9)))
 
     def saveG(self):
-        f = open("guru99.txt", "w")
-        # f=open("guru99.txt","a+")
+        f = open("saveFile1.txt", "w")
+        # f=open("saveFile1.txt","a+")
         #for i in range(10):
 
         # everything that needs to be saved
@@ -91,7 +91,7 @@ class EventHandler():
 
     def loadG(self):
         #Open the file back and read the contents
-        f=open("guru99.txt", "r")
+        f=open("saveFile1.txt", "r")
         if f.mode == 'r':
             r.handler.stage = int(f.readline())
             pl.player.experience = int(f.readline())
