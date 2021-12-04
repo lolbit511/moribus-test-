@@ -67,7 +67,7 @@ class EventHandler():
 
         # Bring back normal backgrounds
         r.Map.hide = False
-        r.background.bgimage = pygame.image.load("images/Background.png").convert()
+        r.background.bgimageAddress = "images/background.png"
         r.background.bgimage = pygame.transform.scale(r.background.bgimage, (p.WIDTH, p.HEIGHT))
         r.ground.image = pygame.image.load("images/Ground.png")
 
@@ -80,11 +80,11 @@ class EventHandler():
         #for i in range(10):
 
         # everything that needs to be saved
-        f.write(str(r.handler.stage) + "\n")
-        f.write(str(pl.player.experience) + "\n")
-        f.write(str(pl.player.mana) + "\n")
-        f.write(str(pl.player.coin) + "\n")
-        f.write(str(hb.healthCount) +"\n")
+        f.write(str(int(r.handler.stage)) + "\n")
+        f.write(str(int(pl.player.experience)) + "\n")
+        f.write(str(int(pl.player.mana)) + "\n")
+        f.write(str(int(pl.player.coin)) + "\n")
+        f.write(str(int(hb.healthCount)) +"\n")
 
         f.close()
 
@@ -138,6 +138,7 @@ class EventHandler():
         self.root.destroy()
         self.world = 1
         pygame.time.set_timer(self.enemy_generation, 2000)
+        r.background.bgimageAddress = "images/background.png"
         # ground.image = pygame.image.load("images/Ground.png")
         r.ground.image = pygame.transform.scale(r.ground.image, (p.WIDTH, int(p.HEIGHT * 0.2)))
         r.ground.rect = r.ground.image.get_rect(center=(int(p.WIDTH / 2), int(p.HEIGHT * 0.9)))
@@ -149,7 +150,7 @@ class EventHandler():
 
     def world2(self):
         self.root.destroy()
-        r.background.bgimage = pygame.image.load("images/wasteland.png").convert()
+        r.background.bgimageAddress = "images/wasteland.png"
         #ground.image = pygame.image.load("images/Ground.png")
         r.ground.image = pygame.transform.scale(r.ground.image, (p.WIDTH, int(p.HEIGHT * 0.2)))
         r.ground.rect = r.ground.image.get_rect(center=(int(p.WIDTH / 2), int(p.HEIGHT * 0.9)))

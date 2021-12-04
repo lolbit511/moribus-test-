@@ -12,4 +12,6 @@ class Map(pygame.sprite.Sprite):
 
     def update(self):
         if self.hide == False and r.handler.world == 0:
+            self.image = pygame.image.load("images/Map.png")
+            self.image = pygame.transform.scale(self.image, (int(p.WIDTH * 0.2), int(p.HEIGHT * 0.3)))
             p.displaysurface.blit(self.image, (int(p.WIDTH * 0.4), int(p.HEIGHT * 0.53))) #0.83

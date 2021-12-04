@@ -23,6 +23,12 @@ import StageDisplay as sd
 pl.player.image = pygame.image.load("images/empty.png")
 
 while True:
+    p.WIDTH, p.HEIGHT = pygame.display.get_surface().get_size()
+    p.HEIGHT = int(p.WIDTH/2)
+    #p.WIDTH = p.WIDTH*2
+    p.displaysurface = pygame.display.set_mode((p.WIDTH, p.HEIGHT), pygame.RESIZABLE)
+
+
     #print(player.experience)
 
 

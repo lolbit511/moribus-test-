@@ -14,7 +14,7 @@ pygame.init()
 
 #main variables
 vec = pygame.math.Vector2
-HEIGHT = 1000
+HEIGHT = 500
 WIDTH = HEIGHT*2 # 2400
 ACC = WIDTH*0.0008 #######################################################################################new#######################################################################################new
 FRIC = -0.10
@@ -31,7 +31,9 @@ color_light = (170,170,170)
 color_dark = (100,100,100)
 color_white = (255,255,255)
 
-displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
+
+displaysurface = pygame.display.set_mode((WIDTH, HEIGHT),pygame.RESIZABLE)
+
 pygame.display.set_caption("Moribus")
 
 

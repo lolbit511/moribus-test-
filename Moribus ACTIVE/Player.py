@@ -51,6 +51,8 @@ class Player(p.pygame.sprite.Sprite):
         self.coin = 0
         self.magic_cooldown = 1
 
+        self.maxHealth = 100
+
         # Stage
         self.stage = 1
         # Health
@@ -114,10 +116,10 @@ class Player(p.pygame.sprite.Sprite):
                 if self.sheildUp == True and self.mana > 0:
                     hb.healthCount = hb.healthCount - int(damage * 0.8)
                     self.mana = self.mana - 10
-                    hb.health.image = p.health_ani[int(hb.healthCount/20)]
+                    hb.health.imageNumber = int((hb.healthCount/self.maxHealth)*5)
                 else:
                     hb.healthCount = hb.healthCount - damage
-                    hb.health.image = p.health_ani[int(hb.healthCount / 20)]
+                    hb.health.imageNumber = int((hb.healthCount/self.maxHealth)*5)
 
                 if hb.healthCount <= 0:
                     mm.mmanager.playsound(p.playerDeathSound, 0.3)
@@ -217,7 +219,7 @@ class Player(p.pygame.sprite.Sprite):
 
         # Cheats ##########################################################################################################################################################################################################################################################
         if hb.healthCount < 25:
-            hb.healthCount = 100  # cheat code 1
+            #hb.healthCount = 100  # cheat code 1
             pass
         #if player.mana < 10:
             #player.mana = 12  # cheat code 2
