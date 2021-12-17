@@ -1,6 +1,6 @@
 import contextlib
 with contextlib.redirect_stdout(None):
-    import pygame # THIS IS THE ACTUAL FILE ON GITHUB (21/11/2021)
+    import pygame # THIS IS THE ACTUAL FILE ON GITHUB (17/12/2021)
 
 
 from pygame.locals import *
@@ -23,10 +23,21 @@ import StageDisplay as sd
 pl.player.image = pygame.image.load("images/empty.png")
 
 while True:
+    #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + str(p.WIDTH))
+
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!" + str(p.ACC))
+
+
     p.WIDTH, p.HEIGHT = pygame.display.get_surface().get_size()
     p.HEIGHT = int(p.WIDTH/2)
     #p.WIDTH = p.WIDTH*2
-    p.displaysurface = pygame.display.set_mode((p.WIDTH, p.HEIGHT), pygame.RESIZABLE)
+
+    if p.WIDTH < 500:
+        p.displaysurface = pygame.display.set_mode((500, 250), pygame.RESIZABLE)
+    elif p.WIDTH > 1390:
+        p.displaysurface = pygame.display.set_mode((1390, 695), pygame.RESIZABLE)
+    else:
+        p.displaysurface = pygame.display.set_mode((p.WIDTH, p.HEIGHT), pygame.RESIZABLE)
 
 
     #print(player.experience)
@@ -170,6 +181,7 @@ while True:
     r.cursor.hover()
 
     if hb.healthCount > 0:
+        pl.player.rect.x = 0
         #displaysurface.blit(player.image, player.rect)
         pl.player.image = pygame.transform.scale(pl.player.image, (pl.player.xRatio, pl.player.yRatio))
         p.displaysurface.blit(pl.player.image, pl.player.rect)

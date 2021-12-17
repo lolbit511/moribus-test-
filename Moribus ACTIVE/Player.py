@@ -26,7 +26,10 @@ class Player(p.pygame.sprite.Sprite):
 
         # Position and direction
         self.vx = 0
-        self.pos = p.vec((340, 240))
+
+        self.playerPOSx = 340
+        self.playerPOSy = 240
+        self.pos = p.vec((self.playerPOSx, self.playerPOSy))
         self.vel = p.vec(0, 0)
         self.acc = p.vec(0, 0)
         self.direction = "RIGHT"
@@ -129,6 +132,8 @@ class Player(p.pygame.sprite.Sprite):
                     pygame.display.update()
 
     def move(self): #player
+        p.ACC = p.WIDTH * 0.0008
+
         if r.cursor.wait == 1: return
         self.acc = p.vec(0, int(p.HEIGHT*0.003)) # player gravity
         # Will set running to False if the player has slowed down to a certain extent
@@ -158,12 +163,13 @@ class Player(p.pygame.sprite.Sprite):
         for SW in r.Swings:
             SW.rect.x += self.vel.x + 0.5 * self.acc.x
         self.pos += self.vel + 0.5 * self.acc  # Updates Position with new values
-
+        self.posREL = self.pos/p.WIDTH
         # This causes character warping from one point of the screen to the other
         if self.pos.x > p.WIDTH:
             self.pos.x = 0
         if self.pos.x < 0:
             self.pos.x = p.WIDTH
+            self.posREL = self.pos / p.WIDTH
 
         self.rect.midbottom = self.pos  # Update rect with new pos
 
@@ -203,13 +209,20 @@ class Player(p.pygame.sprite.Sprite):
 
 
     def update(self): #player
+
+
+        self.xRatio = int(0.10 * p.WIDTH)
+        self.yRatio = int(0.19 * p.HEIGHT)
+        self.image = p.pygame.transform.scale(self.image, (self.xRatio, self.yRatio))
+
         if self.mana < 0:
             self.mana = 0
         if self.sheildUp == True and self.mana > 0:
             print("blocking")
             self.mana = self.mana - 0.1
         else:
-            print("NOT")
+            #print("NOT")
+            pass
         pressed_keys = pygame.key.get_pressed()
 
         if pressed_keys[pygame.K_s]:
