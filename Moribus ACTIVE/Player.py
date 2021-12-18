@@ -299,5 +299,5 @@ class Player(p.pygame.sprite.Sprite):
             self.vel.y = self.jumpheight
 
 
-player = Player()
+player = Player() 
 r.Playergroup.add(player)
